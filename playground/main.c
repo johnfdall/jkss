@@ -30,7 +30,11 @@ int main() {
         net_packet.players[0] = player_one;
         net_packet.players[1] = player_two;
 
-        printf("net_packet number: %d\n", net_packet.sequence_number);
+        uint8_t the_thing[sizeof(net_packet)];
+        printf("sizeof(net_packet): %lu\n", sizeof(net_packet));
+        memcpy(&the_thing, &net_packet, sizeof(net_packet));
+
+        printf("sizeof(the_thing): %lu\n", sizeof(the_thing));
 
         return EXIT_SUCCESS;
 }
