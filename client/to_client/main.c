@@ -5,7 +5,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-typedef enum { CMD_NONE, CMD_MOVE, CMD_ATTACK, CMD_INTERACT } CommandType;
+typedef enum { 
+        CMD_NONE, 
+        CMD_MOVE, 
+        CMD_ATTACK, 
+        CMD_INTERACT 
+} CommandType;
 
 typedef struct Point {
         int32_t x;
@@ -49,8 +54,6 @@ int main() {
 
         ControlGroupArray *controlGroup = ControlGroupArray_INIT(&arena);
         ControlGroup *mainControlGroup = &controlGroup->items[MAIN_CONTROL_GROUP];
-
-        /*SelectGroup *selectGroup = SelectGroup_INIT(&arena);*/
 
         InitWindow(screenWidth, screenHeight, "Raylib - Hello");
         SetTargetFPS(60);
