@@ -8,6 +8,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 #define ISVALIDSOCKET(s) ((s) >= 0)
 #define SOCKET int
@@ -83,6 +84,51 @@ int main() {
                 perror("Failed to create socket");
                 return 1;
         }
+
+        if (bind_socket(sockfd, SERVER_PORT) < 0) {
+                perror("Failed to bind socket");
+                close(sockfd);
+                return 1;
+        }
+
+        if(set_socket_nonblocking(sockfd) < 0) {
+                perror("Failed to set socket non-blocking");
+                close(sockfd);
+                return 1;
+        }
+
+        game_state_t game_state;
+        init_game_state(&game_state);
+
+        printf("Server started on port %d\n", SERVER_PORT);
+        printf("Tick rate: %d Hz\n", TICK_RATE);
+
+        struct timespec tick_time;
+        clock_gettime(CLOCK_MONOTONIC, &tick_time);
+
+        while (1) {
+                // Handle incoming messages
+                handle_client_message(sockfd, &game_state);
+
+                // Check if it's time for next tick
+                struct timespec current_time;
+                clock_gettime(CLOCK_MONOTONIC, &current_time);
+
+                long elapsed_ms = (current_time.tv_sec - tick_time.tv_sec) * 1000 +
+                        (current_time.tv_nsec - tick_time.tv_nsec) / 1000000;
+
+                if (elapsed_ms >= TICK_INTERVAL_MS) {
+                        tick_game_state(&game_state);
+                        broadcast_game_state(sockfd, &game_state);
+                        tick_time = current_time;
+                }
+
+                // Small sleep to prevent busy waiting
+                usleep(1000); // 1ms
+        }
+
+        close(sockfd);
+        return 0;
 }
 
 // int main() {

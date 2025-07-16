@@ -8,6 +8,9 @@ int create_udp_socket(void) {
 }
 
 int bind_socket(int sockfd, int port) {
+        // TODO(John Fredrik): I think this is the same 
+        // as memset?
+        // struct sockaddr_in addr = {0};
         struct sockaddr_in addr;
         memset(&addr, 0, sizeof(addr));
         addr.sin_family = AF_INET;
