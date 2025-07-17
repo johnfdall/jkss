@@ -110,7 +110,10 @@ int main() {
                         tick_time = current_time;
                 }
 
-                usleep(1000); // 1ms
+		struct timespec ts;
+		ts.tv_sec = 0;
+		ts.tv_nsec = 1000000; // 1 millisecond = 1,000,000 nanoseconds
+		nanosleep(&ts, NULL);
         }
 
         close(sockfd);
