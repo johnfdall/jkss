@@ -1,5 +1,5 @@
-#include "game_state.h"
 #include "../network/network.h"
+#include "game_state.h"
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
@@ -8,8 +8,8 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <time.h>
 #include <unistd.h>
+#include <time.h>
 #define ISVALIDSOCKET(s) ((s) >= 0)
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
@@ -19,20 +19,13 @@ typedef struct __attribute((packed)) {
         uint16_t y;
 } PlayerState;
 
-typedef struct __attribute((packed)){
+typedef struct __attribute((packed)) {
         uint32_t sequence_number;
         uint8_t number_of_players;
         PlayerState players[10];
 } GameStatePacket;
 
-static void print_game_state_packet(const GameStatePacket * const gameState){
-        printf("Received Game State Packet...\n");
-        printf("Sequence_number: %d | number_of_players: %d \n", 
-                        gameState->sequence_number, 
-                        gameState->number_of_players);
-}
-
-static void broadcast_game_state(int sockfd, const game_state_t* state) {
+static void broadcast_game_state(int sockfd, const game_state_t *state) {
         game_state_msg_t msg;
         msg.header.type = MSG_GAME_STATE;
         msg.header.sequence = state->tick_count;
@@ -48,19 +41,15 @@ static void broadcast_game_state(int sockfd, const game_state_t* state) {
         }
 }
 
-static void handle_client_message(int sockfd, game_state_t* state) {
+static void handle_client_message(int sockfd, game_state_t *state) {
         char buffer[1024];
         struct sockaddr_in client_addr;
 
-        ssize_t bytes = receive_message(
-                        sockfd, 
-                        buffer, 
-                        sizeof(buffer), 
-                        &client_addr);
+        ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &client_addr);
 
         if (bytes <= 0) return;
 
-        message_header_t* header = (message_header_t*)buffer;
+        message_header_t *header = (message_header_t *)buffer;
 
         switch (header->type) {
                 case MSG_PLAYER_JOIN: {
@@ -69,7 +58,7 @@ static void handle_client_message(int sockfd, game_state_t* state) {
                                               break;
                                       }
                 case MSG_PLAYER_INPUT: {
-                                               input_msg_t* input_msg = (input_msg_t*)buffer;
+                                               input_msg_t *input_msg = (input_msg_t *)buffer;
                                                update_player_input(state, &input_msg->input);
                                                break;
                                        }
@@ -91,7 +80,7 @@ int main() {
                 return 1;
         }
 
-        if(set_socket_nonblocking(sockfd) < 0) {
+        if (set_socket_nonblocking(sockfd) < 0) {
                 perror("Failed to set socket non-blocking");
                 close(sockfd);
                 return 1;
@@ -104,15 +93,13 @@ int main() {
         printf("Tick rate: %d Hz\n", TICK_RATE);
 
         struct timespec tick_time;
-        clock_gettime(CLOCK_MONOTONIC, &tick_time);
+        timespec_get(&tick_time, TIME_UTC);
 
         while (1) {
-                // Handle incoming messages
                 handle_client_message(sockfd, &game_state);
 
-                // Check if it's time for next tick
                 struct timespec current_time;
-                clock_gettime(CLOCK_MONOTONIC, &current_time);
+                timespec_get(&current_time, TIME_UTC);
 
                 long elapsed_ms = (current_time.tv_sec - tick_time.tv_sec) * 1000 +
                         (current_time.tv_nsec - tick_time.tv_nsec) / 1000000;
@@ -123,7 +110,6 @@ int main() {
                         tick_time = current_time;
                 }
 
-                // Small sleep to prevent busy waiting
                 usleep(1000); // 1ms
         }
 
@@ -148,7 +134,7 @@ int main() {
 //         printf("Creating socket...\n");
 //         SOCKET socket_listen;
 //         socket_listen = socket(bind_address->ai_family,
-//                         bind_address->ai_socktype, 
+//                         bind_address->ai_socktype,
 //                         bind_address->ai_protocol);
 //         if (!ISVALIDSOCKET(socket_listen)) {
 //                 fprintf(stderr, "socket() failed. (%d)\n", GETSOCKETERRNO());
@@ -156,7 +142,8 @@ int main() {
 //         }
 //
 //         printf("Binding socket to local address...\n");
-//         if (bind(socket_listen, bind_address->ai_addr, bind_address->ai_addrlen)) {
+//         if (bind(socket_listen, bind_address->ai_addr,
+//         bind_address->ai_addrlen)) {
 //                 fprintf(stderr, "bind() failed. (%d)\n", GETSOCKETERRNO());
 //                 return 1;
 //         }
@@ -172,18 +159,18 @@ int main() {
 //                 fd_set reads;
 //                 reads = master;
 //                 if (select(max_socket+1, &reads, 0, 0, 0) < 0) {
-//                         fprintf(stderr, "select() failed. (%d)\n", GETSOCKETERRNO());
-//                         return 1;
+//                         fprintf(stderr, "select() failed. (%d)\n",
+//                         GETSOCKETERRNO()); return 1;
 //                 }
 //                 if (FD_ISSET(socket_listen, &reads)) {
 //                         struct sockaddr_storage client_address;
 //                         socklen_t client_len = sizeof(client_address);
 //                         char read[45];
-//                         int bytes_received = recvfrom(socket_listen, 
-//                                         read, 
-//                                         45, 
+//                         int bytes_received = recvfrom(socket_listen,
+//                                         read,
+//                                         45,
 //                                         0,
-//                                         (struct sockaddr *)&client_address, 
+//                                         (struct sockaddr *)&client_address,
 //                                         &client_len);
 //
 //                         if (bytes_received < 1) {
@@ -195,30 +182,31 @@ int main() {
 //                         printf("Remote address is: ");
 //                         char address_buffer[100];
 //                         char service_buffer[100];
-//                         getnameinfo((struct sockaddr *)&client_address, 
-//                                         client_len, 
+//                         getnameinfo((struct sockaddr *)&client_address,
+//                                         client_len,
 //                                         address_buffer,
-//                                         sizeof(address_buffer), 
-//                                         service_buffer, 
+//                                         sizeof(address_buffer),
+//                                         service_buffer,
 //                                         sizeof(service_buffer),
 //                                         NI_NUMERICHOST);
 //
-//                         GameStatePacket *gameStatePacket = (GameStatePacket *)read;
+//                         GameStatePacket *gameStatePacket = (GameStatePacket
+//                         *)read;
 //
 //                         print_game_state_packet(gameStatePacket);
 //
-//                         // printf("Received from %s %s: \n%s\n", 
-//                         //                 address_buffer, 
-//                         //                 service_buffer, 
+//                         // printf("Received from %s %s: \n%s\n",
+//                         //                 address_buffer,
+//                         //                 service_buffer,
 //                         //                 read);
 //                         // int j;
 //                         // for (j = 0; j < bytes_received; ++j)
 //                         //         read[j] = toupper(read[j]);
-//                         // sendto(socket_listen, 
-//                         //                 read, 
-//                         //                 bytes_received, 
+//                         // sendto(socket_listen,
+//                         //                 read,
+//                         //                 bytes_received,
 //                         //                 0,
-//                         //                 (struct sockaddr*)&client_address, 
+//                         //                 (struct sockaddr*)&client_address,
 //                         //                 client_len);
 //                 } //if FD_ISSET
 //         } //while(1)
