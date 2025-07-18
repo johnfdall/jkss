@@ -35,7 +35,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c | $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILDDIR):
-	mkdir -p $(BUILDDIR)/common $(BUILDDIR)/server $(BUILDDIR)/client
+	mkdir -p $(BUILDDIR)/network $(BUILDDIR)/server $(BUILDDIR)/client
 
 clean:
 	rm -rf $(BUILDDIR)
