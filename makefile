@@ -14,8 +14,8 @@ SERVER_OBJS = $(SERVER_SRCS:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
 CLIENT_OBJS = $(CLIENT_SRCS:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
 
 # Targets
-SERVER_TARGET = $(BUILDDIR)/server
-CLIENT_TARGET = $(BUILDDIR)/client
+SERVER_TARGET = $(BUILDDIR)/server.out
+CLIENT_TARGET = $(BUILDDIR)/client.out
 
 .PHONY: all clean server client
 
