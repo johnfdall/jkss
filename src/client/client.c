@@ -59,6 +59,11 @@ int main(int argc, char *argv[]) {
                 return 1;
         }
 
+        struct timeval tv;
+        tv.tv_sec = 5;  // 5 seconds timeout
+        tv.tv_usec = 0;
+        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+
         struct sockaddr_in server_addr = {0};
         server_addr.sin_family = AF_INET;
         server_addr.sin_port = htons(SERVER_PORT);
@@ -74,7 +79,10 @@ int main(int argc, char *argv[]) {
         char buffer[4096];
         while (1) {
                 struct sockaddr_in from_addr;
-                ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), 
+                ssize_t bytes = receive_message(
+                                sockfd, 
+                                buffer, 
+                                sizeof(buffer), 
                                 &from_addr);
 
                 if (bytes > 0) {
@@ -85,7 +93,9 @@ int main(int argc, char *argv[]) {
                                                 state_msg->tick, state_msg->player_count);
                         }
                 }
-
+                else {
+                        printf("error in bytes D: %zd\n", bytes);
+                }
                 usleep(16667); // ~60 FPS
         }
 

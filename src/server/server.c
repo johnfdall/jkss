@@ -108,12 +108,12 @@ int main() {
                         tick_game_state(&game_state);
                         broadcast_game_state(sockfd, &game_state);
                         tick_time = current_time;
+                        printf("Broadcasting tick: %d\n", game_state.tick_count);
                 }
 
-		struct timespec ts;
-		ts.tv_sec = 0;
-		ts.tv_nsec = 1000000; // 1 millisecond = 1,000,000 nanoseconds
-		nanosleep(&ts, NULL);
+                struct timespec ts = {0};
+                ts.tv_nsec = 1000000; // 1 millisecond = 1,000,000 nanoseconds
+                nanosleep(&ts, NULL);
         }
 
         close(sockfd);

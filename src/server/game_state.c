@@ -60,10 +60,10 @@ void tick_game_state(game_state_t* state) {
                         state->players[i].vel_y *= 0.9f;
 
                         // Disconnect inactive clients (timeout after 5 seconds)
-                        if (state->tick_count - state->clients[i].last_seen_tick > 
-                                        TICK_RATE * 5) {
-                                remove_player(state, i);
-                        }
+                        // if (state->tick_count - state->clients[i].last_seen_tick > 
+                        //                 TICK_RATE * 5) {
+                        //         remove_player(state, i);
+                        // }
                 }
         }
 
