@@ -9,8 +9,8 @@ void init_game_state(game_state_t* state) {
         for (int i = 0; i < 10; i++) {
                 entity_state_t entity = {
                         .id = i,
-                        .x = i * 10,
-                        .y = i * 10,
+                        .x = i * 50,
+                        .y = i * 50,
                 };
                 state->entities[i] = entity;
                 state->entity_count++;
