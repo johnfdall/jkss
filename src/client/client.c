@@ -1,3 +1,5 @@
+#include "raylib.h"
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -9,6 +11,19 @@
 #define GETSOCKETERRNO() (errno)
 #include <stdio.h>
 #include "../network/network.h"
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
+
+
+void draw_entity(const entity_state_t * const entity) {
+        DrawCircle(entity->x, entity->y, 100, RED);
+}
+
+void draw_entities(const game_state_msg_t * const game_msg) {
+        for (uint32_t i = 0; i < game_msg->entity_count; i++) {
+                draw_entity(&game_msg->entities[i]);
+        }
+}
 
 int main(int argc, char *argv[]) {
         if (argc < 3) {
@@ -21,6 +36,9 @@ int main(int argc, char *argv[]) {
                 perror("Failed to create socket");
                 return 1;
         }
+
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raylib - Hello");
+        SetTargetFPS(60);
 
         struct sockaddr_in server_addr = {0};
         server_addr.sin_family = AF_INET;
@@ -35,7 +53,7 @@ int main(int argc, char *argv[]) {
         send_message(sockfd, &join_msg, sizeof(join_msg), &server_addr);
         printf("Sent join request to server\n");
         char buffer[4096];
-        while (1) {
+        while (!WindowShouldClose()) {
                 struct sockaddr_in from_addr;
                 ssize_t bytes = receive_message(
                                 sockfd, 
@@ -47,6 +65,7 @@ int main(int argc, char *argv[]) {
                         message_header_t* header = (message_header_t*)buffer;
                         if (header->type == MSG_GAME_STATE) {
                                 game_state_msg_t* state_msg = (game_state_msg_t*)buffer;
+                                draw_entities(state_msg);
                                 printf("Tick: %u, Players: %u\n", 
                                                 state_msg->tick, 
                                                 state_msg->player_count);
@@ -69,9 +88,12 @@ int main(int argc, char *argv[]) {
                 msg.input = input;
 
                 send_message(sockfd, &msg, sizeof(msg), &from_addr);
-                usleep(16667); // ~60 FPS
+                BeginDrawing();
+                ClearBackground(BLACK);
+                EndDrawing();
         }
 
         close(sockfd);
-        return 0;
+        CloseWindow();
+        return EXIT_SUCCESS;
 }

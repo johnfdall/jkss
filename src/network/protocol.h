@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 
 #define MAX_PLAYERS 100
+#define MAX_ENTITIES 100
 #define SERVER_PORT 8080
 #define TICK_RATE 60
 #define TICK_INTERVAL_MS (1000 / TICK_RATE)
@@ -39,12 +40,20 @@ typedef struct {
         uint16_t data_size;
 } message_header_t;
 
+typedef struct {
+        uint32_t id;
+        int x;
+        int y;
+} entity_state_t;
+
 // Game state message
 typedef struct {
         message_header_t header;
         uint32_t tick;
         uint32_t player_count;
         player_state_t players[MAX_PLAYERS];
+        uint32_t entity_count;
+        entity_state_t entities[MAX_ENTITIES];
 } game_state_msg_t;
 
 // Input message
@@ -52,5 +61,6 @@ typedef struct {
         message_header_t header;
         player_input_t input;
 } input_msg_t;
+
 
 #endif

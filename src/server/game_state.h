@@ -13,6 +13,8 @@ typedef struct {
 typedef struct {
         player_state_t players[MAX_PLAYERS];
         client_info_t clients[MAX_PLAYERS];
+        entity_state_t entities[MAX_ENTITIES];
+        uint8_t entity_count;
         uint32_t tick_count;
         uint32_t active_players;
 } game_state_t;

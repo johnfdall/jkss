@@ -32,7 +32,9 @@ static void broadcast_game_state(int sockfd, const game_state_t *state) {
         msg.header.data_size = sizeof(game_state_msg_t) - sizeof(message_header_t);
         msg.tick = state->tick_count;
         msg.player_count = state->active_players;
+        msg.entity_count = state->entity_count;
         memcpy(msg.players, state->players, sizeof(state->players));
+        memcpy(msg.entities, state->entities, sizeof(state->entities));
 
         for (int i = 0; i < MAX_PLAYERS; i++) {
                 if (state->clients[i].connected) {
