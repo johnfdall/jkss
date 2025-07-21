@@ -21,7 +21,7 @@ typedef enum {
 // Player input structure
 typedef struct {
         uint32_t player_id;
-        float move_x, move_y;
+        int move_x, move_y;
         uint8_t buttons; // Bit flags for button states
 } player_input_t;
 

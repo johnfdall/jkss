@@ -14,7 +14,6 @@
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
-
 void draw_entity(const entity_state_t * const entity) {
         DrawCircle(entity->x, entity->y, 10, RED);
 }
@@ -66,28 +65,29 @@ int main(int argc, char *argv[]) {
                         if (header->type == MSG_GAME_STATE) {
                                 game_state_msg_t* state_msg = (game_state_msg_t*)buffer;
                                 draw_entities(state_msg);
-                                printf("Tick: %u, Players: %u\n", 
-                                                state_msg->tick, 
-                                                state_msg->player_count);
+                                // printf("Tick: %u, Players: %u\n", 
+                                //                 state_msg->tick, 
+                                //                 state_msg->player_count);
 
                         }
                 }
-                else {
-                        //TODO(John Fredrik): Handle this properly, or not at all
-                        printf("error in bytes D: %zd\n", bytes);
+
+                //Inputs
+                //Right-click
+                if(IsMouseButtonPressed(1)) {
+                        player_input_t input = {0};
+                        input.move_x = GetMouseX();
+                        input.move_x = GetMouseY();
+                        input.player_id = 0;
+
+                        input_msg_t msg = {0};
+                        msg.header.type = MSG_PLAYER_INPUT;
+                        msg.input = input;
+
+                        send_message(sockfd, &msg, sizeof(msg), &from_addr);
                 }
 
                 //Test sending some Input every frame
-                player_input_t input = {0};
-                input.move_x = 10.0;
-                input.move_x = 10.0;
-                input.player_id = 0;
-
-                input_msg_t msg = {0};
-                msg.header.type = MSG_PLAYER_INPUT;
-                msg.input = input;
-
-                send_message(sockfd, &msg, sizeof(msg), &from_addr);
                 BeginDrawing();
                 ClearBackground(BLACK);
                 EndDrawing();
