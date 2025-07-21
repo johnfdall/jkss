@@ -47,7 +47,7 @@ void remove_player(game_state_t* state, uint32_t player_id) {
 }
 
 static void print_player_input(const player_input_t * const input) {
-        printf("Player: %d moved to (%f, %f) \n", input->player_id, input->move_x, input->move_y);
+        printf("Player: %d moved to (%d, %d) \n", input->player_id, input->move_x, input->move_y);
 }
 
 void update_player_input(game_state_t* state, const player_input_t* input) {
