@@ -1,28 +1,19 @@
 #include "raylib.h"
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
 #include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
-#include <stdio.h>
 #include "../network/network.h"
+#include "draw.c"
+#include <stdio.h>
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-
-void draw_entity(const entity_state_t * const entity) {
-        DrawCircle(entity->x, entity->y, 10, RED);
-}
-
-void draw_entities(const game_state_msg_t * const game_msg) {
-        for (uint32_t i = 0; i < game_msg->entity_count; i++) {
-                draw_entity(&game_msg->entities[i]);
-        }
-}
 
 int main(int argc, char *argv[]) {
         if (argc < 3) {
@@ -54,27 +45,22 @@ int main(int argc, char *argv[]) {
         char buffer[4096];
         while (!WindowShouldClose()) {
                 struct sockaddr_in from_addr;
-                ssize_t bytes = receive_message(
-                                sockfd, 
-                                buffer, 
-                                sizeof(buffer), 
-                                &from_addr);
+                ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &from_addr);
 
                 if (bytes > 0) {
-                        message_header_t* header = (message_header_t*)buffer;
+                        message_header_t *header = (message_header_t *)buffer;
                         if (header->type == MSG_GAME_STATE) {
-                                game_state_msg_t* state_msg = (game_state_msg_t*)buffer;
+                                game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
                                 draw_entities(state_msg);
-                                // printf("Tick: %u, Players: %u\n", 
-                                //                 state_msg->tick, 
+                                // printf("Tick: %u, Players: %u\n",
+                                //                 state_msg->tick,
                                 //                 state_msg->player_count);
-
                         }
                 }
 
-                //Inputs
-                //Right-click
-                if(IsMouseButtonPressed(1)) {
+                // Inputs
+                // Right-click
+                if (IsMouseButtonPressed(1)) {
                         player_input_t input = {0};
                         input.move_x = GetMouseX();
                         input.move_x = GetMouseY();
@@ -87,7 +73,7 @@ int main(int argc, char *argv[]) {
                         send_message(sockfd, &msg, sizeof(msg), &from_addr);
                 }
 
-                //Test sending some Input every frame
+                // Test sending some Input every frame
                 BeginDrawing();
                 ClearBackground(BLACK);
                 EndDrawing();
