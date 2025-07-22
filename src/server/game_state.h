@@ -3,6 +3,9 @@
 
 #include "../network/protocol.h"
 #include <netinet/in.h>
+#include <raylib.h>
+#include "entity.c"
+#include "entity_array.c"
 
 typedef struct {
         struct sockaddr_in addr;
@@ -13,7 +16,7 @@ typedef struct {
 typedef struct {
         player_state_t players[MAX_PLAYERS];
         client_info_t clients[MAX_PLAYERS];
-        entity_state_t entities[MAX_ENTITIES];
+        EntityArray entities;
         uint8_t entity_count;
         uint32_t tick_count;
         uint32_t active_players;
