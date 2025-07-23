@@ -2,10 +2,7 @@
 #define GAME_STATE_H
 
 #include "../network/protocol.h"
-#include <netinet/in.h>
-#include <raylib.h>
-#include "entity.c"
-#include "entity_array.c"
+#include "entity_array.h"
 
 typedef struct {
         struct sockaddr_in addr;

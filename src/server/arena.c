@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#pragma once
-
-typedef struct {
-        void *buffer;
-        size_t capacity;
-        size_t offset;
-} Arena;
+#include "arena.h"
 
 void ArenaInit(Arena *arena, size_t capacity) {
         arena->buffer = malloc(capacity);

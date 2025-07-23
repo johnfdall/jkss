@@ -1,22 +1,8 @@
-#include "arena.c"
+#include "arena.h"
+#include "control_group.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MAIN_CONTROL_GROUP 11
-#define MAX_GROUPS 12
-#define SECTION_BITS 64
-#define MAX_INDEX 128
-
-#pragma once
-typedef struct {
-        uint64_t sectionOne;
-        uint64_t sectionTwo;
-} ControlGroup;
-
-typedef struct {
-        ControlGroup items[MAX_GROUPS];
-        uint8_t count;
-} ControlGroupArray;
 
 void ControlGroupToggleUnit(ControlGroup *controlGroup, uint8_t index) {
         if (index < SECTION_BITS) {

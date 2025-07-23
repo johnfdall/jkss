@@ -5,7 +5,13 @@ BUILDDIR = build
 
 # Source files
 NETWORK_SRCS = $(SRCDIR)/network/network.c
-SERVER_SRCS = $(SRCDIR)/server/server.c $(SRCDIR)/server/game_state.c
+SERVER_SRCS = $(SRCDIR)/server/server.c \
+	      $(SRCDIR)/server/game_state.c\
+	      $(SRCDIR)/server/entity.c\
+	      $(SRCDIR)/server/entity_array.c\
+	      $(SRCDIR)/server/arena.c\
+	      $(SRCDIR)/server/control_group.c\
+
 CLIENT_SRCS = $(SRCDIR)/client/client.c
 
 # Object files
