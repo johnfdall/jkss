@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -19,22 +20,6 @@
 #include <stdio.h>
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-
-
-// void EntityArray_INIT(EntityArray *array, Arena *arena, size_t capacity);
-// typedef struct {
-//         uint32_t id;
-//         int x;
-//         int y;
-// } entity_state_t;
-//
-// Entity entity1 = {.id = 1,
-// 	.x = 256,
-// 	.y = 144,
-// 	.radius = 30.0,
-// 	.color = RED,
-// 	.moveSpeed = 400,
-// 	.direction = {.x = 20.0, .y = 20.0}};
 
 static void EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg) {
 	for (uint32_t i = 0; i < network_msg->entity_count; i++) {
@@ -86,7 +71,6 @@ int main(int argc, char *argv[]) {
 
 
 	//Setup game state
-
 	Arena entity_arena;
         ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
 
@@ -112,12 +96,12 @@ int main(int argc, char *argv[]) {
                                 game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				clientState.tick_count = state_msg->tick;
 				EntityArray_FROM_NETWORK_MSG(&clientState.entities, state_msg);
-                                // draw_entities(state_msg);
-                                // printf("Tick: %u, Players: %u\n",
-                                //                 state_msg->tick,
-                                //                 state_msg->player_count);
                         }
-                }
+		} else {
+			fprintf(stderr,
+					"recv() failed: errno=%d (%s)\n",
+					errno, strerror(errno));
+		}
 
                 // Inputs
                 // Right-click
@@ -130,11 +114,14 @@ int main(int argc, char *argv[]) {
                         input_msg_t msg = {0};
                         msg.header.type = MSG_PLAYER_INPUT;
                         msg.input = input;
+			printf("Thing in Controlgroup: %lu\n",mainControlGroup->sectionOne);
 
                         send_message(sockfd, &msg, sizeof(msg), &from_addr);
                 }
 
+		HandleEntityClick(&clientState.entities, mainControlGroup);
 		DrawEntities(&clientState.entities, mainControlGroup);
+		// printf("Still going, tick: %d\n", clientState.tick_count);
 
                 // Test sending some Input every frame
                 BeginDrawing();
