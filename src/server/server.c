@@ -1,6 +1,6 @@
 #include "../network/network.h"
-#include "arena.h"
-#include "entity_array.h"
+#include "../entity/arena.h"
+#include "../entity/entity_array.h"
 #include "game_state.h"
 #include <arpa/inet.h>
 #include <errno.h>

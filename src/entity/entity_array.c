@@ -7,6 +7,22 @@ void EntityArray_ADD(EntityArray *array, Entity entity) {
 	array->items[array->length++] = entity;
 }
 
+void EntityArray_UPSERT(EntityArray *array, Entity entity) {
+	bool exists = false;
+	for (size_t i = 0; i < array->length; i++) {
+		//Is already in the array
+		if(array->items[i].id == entity.id) {
+			exists = true;
+			array->items[i] = entity;
+			break;
+		}
+	}
+
+	if(!exists) {
+		EntityArray_ADD(array, entity);
+	}
+}
+
 void EntityArray_SETUP(EntityArray *array) {
 	Entity entity1 = {.id = 1,
 		.x = 256,

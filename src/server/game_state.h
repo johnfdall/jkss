@@ -2,7 +2,7 @@
 #define GAME_STATE_H
 
 #include "../network/protocol.h"
-#include "entity_array.h"
+#include "../entity/entity_array.h"
 
 typedef struct {
         struct sockaddr_in addr;

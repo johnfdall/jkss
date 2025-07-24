@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -10,10 +11,50 @@
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
 #include "../network/network.h"
-#include "draw.c"
+#include "../entity/arena.h"
+#include "client_state.h"
+#include "../entity/entity.h"
+#include "../entity/entity_array.h"
+#include "../entity/control_group.h"
 #include <stdio.h>
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
+
+
+// void EntityArray_INIT(EntityArray *array, Arena *arena, size_t capacity);
+// typedef struct {
+//         uint32_t id;
+//         int x;
+//         int y;
+// } entity_state_t;
+//
+// Entity entity1 = {.id = 1,
+// 	.x = 256,
+// 	.y = 144,
+// 	.radius = 30.0,
+// 	.color = RED,
+// 	.moveSpeed = 400,
+// 	.direction = {.x = 20.0, .y = 20.0}};
+
+static void EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg) {
+	for (uint32_t i = 0; i < network_msg->entity_count; i++) {
+		entity_state_t incoming_entity = network_msg->entities[i];
+
+		Entity client_entity = {
+			.id = incoming_entity.id,
+			.x = incoming_entity.x,
+			.y = incoming_entity.y,
+			.radius = 30.0,
+			.color = RED,
+			.moveSpeed = 400,
+			.direction = {.x = 20.0, .y = 20.0}
+		};
+
+		EntityArray_UPSERT(array, client_entity);
+	}
+
+
+}
 
 int main(int argc, char *argv[]) {
         if (argc < 3) {
@@ -42,6 +83,24 @@ int main(int argc, char *argv[]) {
 
         send_message(sockfd, &join_msg, sizeof(join_msg), &server_addr);
         printf("Sent join request to server\n");
+
+
+	//Setup game state
+
+	Arena entity_arena;
+        ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
+
+        ControlGroupArray *controlGroup = ControlGroupArray_INIT(&entity_arena);
+        ControlGroup *mainControlGroup = &controlGroup->items[MAIN_CONTROL_GROUP];
+        EntityArray entityArray;
+        EntityArray_INIT(&entityArray, &entity_arena, 20);
+
+	ClientState clientState = {0};
+	//TODO(John Fredrik): This should come from some kind of 
+	//"joined server" message with initial client state data
+	clientState.id = 1;
+	clientState.entities = entityArray;
+
         char buffer[4096];
         while (!WindowShouldClose()) {
                 struct sockaddr_in from_addr;
@@ -51,7 +110,9 @@ int main(int argc, char *argv[]) {
                         message_header_t *header = (message_header_t *)buffer;
                         if (header->type == MSG_GAME_STATE) {
                                 game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
-                                draw_entities(state_msg);
+				clientState.tick_count = state_msg->tick;
+				EntityArray_FROM_NETWORK_MSG(&clientState.entities, state_msg);
+                                // draw_entities(state_msg);
                                 // printf("Tick: %u, Players: %u\n",
                                 //                 state_msg->tick,
                                 //                 state_msg->player_count);
@@ -72,6 +133,8 @@ int main(int argc, char *argv[]) {
 
                         send_message(sockfd, &msg, sizeof(msg), &from_addr);
                 }
+
+		DrawEntities(&clientState.entities, mainControlGroup);
 
                 // Test sending some Input every frame
                 BeginDrawing();
