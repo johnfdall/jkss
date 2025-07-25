@@ -60,8 +60,14 @@ static void handle_client_message(int sockfd, game_state_t *state) {
 					      printf("Player %d joined\n", player_id);
 					      break;
 				      }
+
 		case MSG_PLAYER_INPUT: {
 					       input_msg_t *input_msg = (input_msg_t *)buffer;
+					       printf("%lu -> {x: %d, y: %d}\n", 
+							       input_msg->input.sectionOne, 
+							       input_msg->input.move_x, 
+							       input_msg->input.move_y
+						     );
 					       update_player_input(state, &input_msg->input);
 					       break;
 				       }

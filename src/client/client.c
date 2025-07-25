@@ -102,13 +102,15 @@ int main(int argc, char *argv[]) {
 			//TODO (John Fredrik): Send move command with all entities in control group
 			player_input_t input = {0};
 			input.move_x = GetMouseX();
-			input.move_x = GetMouseY();
+			input.move_y = GetMouseY();
 			input.player_id = 0;
+			input.sectionOne = mainControlGroup->sectionOne;
+			input.sectionTwo = mainControlGroup->sectionTwo;
 
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;
 			msg.input = input;
-			printf("Thing in Controlgroup: %lu\n", mainControlGroup->sectionOne);
+			printf("%lu -> {x: %d, y: %d}\n", mainControlGroup->sectionOne, input.move_x, input.move_y);
 
 			send_message(sockfd, &msg, sizeof(msg), &from_addr);
 		}

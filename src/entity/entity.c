@@ -9,7 +9,7 @@ void AffectWithGravity(Entity *entity, int screen_height) {
 	entity->y += 10;
 }
 
-void DrawEntity(Entity entity, int index, ControlGroup *group) {
+void DrawEntity(const Entity entity, const int index, ControlGroup *group) {
 	DrawCircle(entity.x, entity.y, entity.radius, entity.color);
 	char textBuffer[5];
 	snprintf(textBuffer, sizeof(textBuffer), "%d", entity.id);
@@ -19,8 +19,8 @@ void DrawEntity(Entity entity, int index, ControlGroup *group) {
 	}
 }
 
-bool IsEntityClicked(Entity entity) {
-	Vector2 mousePos = GetMousePosition();
+bool IsEntityClicked(const Entity entity) {
+	const Vector2 mousePos = GetMousePosition();
 	return IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
 		CheckCollisionPointCircle(mousePos, (Vector2){entity.x, entity.y},
 				entity.radius);
