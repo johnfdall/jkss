@@ -37,12 +37,11 @@ void remove_player(game_state_t* state, uint32_t player_id) {
 	}
 }
 
-static void print_player_input(const player_input_t * const input) {
-	printf("Player: %d moved to (%d, %d) \n", input->player_id, input->move_x, input->move_y);
-}
+// static void print_player_input(const player_input_t * const input) {
+// 	printf("Player: %d moved to (%d, %d) \n", input->player_id, input->move_x, input->move_y);
+// }
 
 void update_player_input(game_state_t* state, const player_input_t* input) {
-	print_player_input(input);
 	uint32_t id = input->player_id;
 	if (id < MAX_PLAYERS && state->players[id].active) {
 		// Simple movement update - customize as needed

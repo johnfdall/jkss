@@ -1,4 +1,5 @@
 #include "../entity/arena.h"
+#include "../input/input.h"
 #include "../entity/control_group.h"
 #include "../entity/entity.h"
 #include "../entity/entity_array.h"
@@ -68,11 +69,11 @@ int main(int argc, char *argv[]) {
 	// Setup game state
 	Arena entity_arena;
 	ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
-
-	ControlGroupArray *controlGroup = ControlGroupArray_INIT(&entity_arena);
-	ControlGroup *mainControlGroup = &controlGroup->items[MAIN_CONTROL_GROUP];
+	ControlGroup controlGroups;
+	ControlGroup_INIT(&controlGroups, &entity_arena, 100);
 	EntityArray entityArray;
 	EntityArray_INIT(&entityArray, &entity_arena, 20);
+
 
 	ClientState clientState = {0};
 	// TODO(John Fredrik): This should come from some kind of
@@ -104,19 +105,18 @@ int main(int argc, char *argv[]) {
 			input.move_x = GetMouseX();
 			input.move_y = GetMouseY();
 			input.player_id = 0;
-			input.sectionOne = mainControlGroup->sectionOne;
-			input.sectionTwo = mainControlGroup->sectionTwo;
+			input.command_type = CMD_MOVE;
+			ControlGroup_TO_NETPACKET(&controlGroups, &input);
 
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;
 			msg.input = input;
-			printf("%lu -> {x: %d, y: %d}\n", mainControlGroup->sectionOne, input.move_x, input.move_y);
 
 			send_message(sockfd, &msg, sizeof(msg), &from_addr);
 		}
 
-		HandleEntityClick(&clientState.entities, mainControlGroup);
-		DrawEntities(&clientState.entities, mainControlGroup);
+		HandleEntityClick(&clientState.entities, &controlGroups);
+		DrawEntities(&clientState.entities, &controlGroups);
 		BeginDrawing();
 		ClearBackground(BLACK);
 		EndDrawing();

@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <netinet/in.h>
+#include "../input/input.h"
 
 #define MAX_PLAYERS 100
 #define MAX_ENTITIES 100
@@ -22,8 +23,8 @@ typedef enum {
 typedef struct {
         uint32_t player_id;
         int move_x, move_y;
-        uint64_t sectionOne;
-        uint64_t sectionTwo;
+	int32_t entity_ids[MAX_ENTITIES];
+	CommandType command_type;
 } player_input_t;
 
 // Player state

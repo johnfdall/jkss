@@ -63,11 +63,17 @@ static void handle_client_message(int sockfd, game_state_t *state) {
 
 		case MSG_PLAYER_INPUT: {
 					       input_msg_t *input_msg = (input_msg_t *)buffer;
-					       printf("%lu -> {x: %d, y: %d}\n", 
-							       input_msg->input.sectionOne, 
-							       input_msg->input.move_x, 
-							       input_msg->input.move_y
-						     );
+					       printf("\n");
+					       size_t i = 0;
+					       while(input_msg->input.entity_ids[i] != 0) {
+						       printf("%d", input_msg->input.entity_ids[i]);
+						       i++;
+					       }
+					       printf("-> type: %d -> {%d, %d}\n", 
+							       input_msg->input.command_type,
+							       input_msg->input.move_x,
+							       input_msg->input.move_y);
+
 					       update_player_input(state, &input_msg->input);
 					       break;
 				       }
@@ -125,7 +131,7 @@ int main() {
 			tick_game_state(&game_state);
 			broadcast_game_state(sockfd, &game_state);
 			tick_time = current_time;
-			printf("Broadcasting tick: %d\n", game_state.tick_count);
+			// printf("Broadcasting tick: %d\n", game_state.tick_count);
 		}
 
 		struct timespec ts = {0};

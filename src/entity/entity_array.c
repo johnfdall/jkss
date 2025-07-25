@@ -136,7 +136,8 @@ void HandleEntityClick(EntityArray *array, ControlGroup *group) {
 	for (size_t i = 0; i < array->length; i++) {
 		Entity item = EntityArray_GET(array, i);
 		if (IsEntityClicked(item)) {
-			ControlGroupToggleUnit(group, (uint8_t)i);
+			printf("ENTITY CLICKED %d\n", item.id);
+			ControlGroup_TOGGLE(group, item.id);
 		};
 	}
 }
@@ -144,7 +145,7 @@ void HandleEntityClick(EntityArray *array, ControlGroup *group) {
 void DrawEntities(EntityArray *array, ControlGroup *group) {
 	for (size_t i = 0; i < array->length; i++) {
 		Entity item = EntityArray_GET(array, i);
-		DrawEntity(item, i, group);
+		DrawEntity(item, group);
 	}
 }
 

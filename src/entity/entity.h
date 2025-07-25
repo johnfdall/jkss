@@ -16,7 +16,7 @@ typedef struct {
 } Entity;
 
 void AffectWithGravity(Entity *entity, int screen_height);
-void DrawEntity(Entity entity, int index, ControlGroup *group);
+void DrawEntity(Entity entity, ControlGroup *group);
 bool IsEntityClicked(Entity entity);
 
 #endif
