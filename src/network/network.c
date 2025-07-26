@@ -8,11 +8,7 @@ int create_udp_socket(void) {
 }
 
 int bind_socket(int sockfd, int port) {
-        // TODO(John Fredrik): I think this is the same 
-        // as memset?
-        // struct sockaddr_in addr = {0};
-        struct sockaddr_in addr;
-        memset(&addr, 0, sizeof(addr));
+        struct sockaddr_in addr = {0};
         addr.sin_family = AF_INET;
         addr.sin_addr.s_addr = INADDR_ANY;
         addr.sin_port = htons(port);
@@ -31,17 +27,17 @@ int set_socket_nonblocking(const int sockfd) {
 }
 
 ssize_t send_message(const int sockfd, 
-                const void* const data, 
-                const size_t size, 
-                const struct sockaddr_in* const addr) {
+                     const void* const data, 
+                     const size_t size, 
+                     const struct sockaddr_in* const addr) {
         return sendto(sockfd, data, size, 0, 
                         (struct sockaddr*)addr, sizeof(*addr));
 }
 
 ssize_t receive_message(const int sockfd, 
-                void* buffer, 
-                const size_t buffer_size, 
-                const struct sockaddr_in * const from_addr) {
+                        void* buffer, 
+                        const size_t buffer_size, 
+                        const struct sockaddr_in * const from_addr) {
         socklen_t addr_len = sizeof(*from_addr);
         return recvfrom(sockfd, buffer, buffer_size, 0, 
                         (struct sockaddr*)from_addr, &addr_len);

@@ -7,15 +7,14 @@
 
 typedef struct {
         int32_t id;
-        int x;
-        int y;
+	Point position;
+	Point destination;
         float radius;
         Color color;
         int moveSpeed;
         Vector2 direction;
 } Entity;
 
-void AffectWithGravity(Entity *entity, int screen_height);
 void DrawEntity(Entity entity, ControlGroup *group);
 bool IsEntityClicked(Entity entity);
 

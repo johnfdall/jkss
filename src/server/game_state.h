@@ -11,7 +11,7 @@ typedef struct {
 } client_info_t;
 
 typedef struct {
-        player_state_t players[MAX_PLAYERS];
+        player_state_t players[2];
         client_info_t clients[MAX_PLAYERS];
         EntityArray entities;
         uint8_t entity_count;

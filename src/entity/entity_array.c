@@ -24,85 +24,162 @@ void EntityArray_UPSERT(EntityArray *array, Entity entity) {
 }
 
 void EntityArray_SETUP(EntityArray *array) {
-	Entity entity1 = {.id = 1,
-		.x = 256,
-		.y = 144,
+	Entity entity1 = {
+		.id = 1,
+		.position = {
+			.x = 256,
+			.y = 144,
+		},
+		.destination = {
+			.x = 256,
+			.y = 144,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity2 = {.id = 2,
-		.x = 540,
-		.y = 200,
+	Entity entity2 = {
+		.id = 2,
+		.position = {
+			.x = 540,
+			.y = 200,
+		},
+		.destination = {
+			.x = 540,
+			.y = 200,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity3 = {.id = 3,
-		.x = 868,
-		.y = 400,
+	Entity entity3 = {
+		.id = 3,
+		.position = {
+			.x = 868,
+			.y = 400,
+		},
+		.destination = {
+			.x = 868,
+			.y = 400,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
 		.direction = {.x = 20.0, .y = 20.0}};
 
 	Entity entity4 = {.id = 4,
-		.x = 1000,
-		.y = 666,
+		.position = {
+			.x = 1000,
+			.y = 666,
+		},
+		.destination = {
+			.x = 1000,
+			.y = 666,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity5 = {.id = 5,
-		.x = 1280,
-		.y = 420,
+	Entity entity5 = {
+		.id = 5,
+		.position = {
+			.x = 1280,
+			.y = 420,
+		},
+		.destination = {
+			.x = 1280,
+			.y = 420,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity6 = {.id = 6,
-		.x = 1423,
-		.y = 864,
+	Entity entity6 = {
+		.id = 6,
+		.position = {
+			.x = 1423,
+			.y = 864,
+		},
+		.destination = {
+			.x = 1423,
+			.y = 864,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
 	Entity entity7 = {.id = 7,
-		.x = 1792,
-		.y = 1008,
+		.position = {
+			.x = 1792,
+			.y = 1008,
+		},
+		.destination = {
+			.x = 1792,
+			.y = 1008,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity8 = {.id = 8,
-		.x = 2048,
-		.y = 1159,
+	Entity entity8 = {
+		.id = 8,
+		.position = {
+			.x = 2048,
+			.y = 1159,
+		},
+		.destination = {
+			.x = 2048,
+			.y = 1159,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity9 = {.id = 9,
-		.x = 2304,
-		.y = 1296,
+	Entity entity9 = {
+		.id = 9,
+		.position = {
+			.x = 2304,
+			.y = 1296,
+		},
+		.destination = {
+			.x = 2304,
+			.y = 1296,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
-	Entity entity10 = {.id = 10,
-		.x = 2200,
-		.y = 237,
+	Entity entity10 = {
+		.id = 10,
+		.position = {
+			.x = 2200,
+			.y = 237,
+		},
+		.destination = {
+			.x = 2200,
+			.y = 237,
+		},
 		.radius = 30.0,
 		.color = RED,
 		.moveSpeed = 400,
-		.direction = {.x = 20.0, .y = 20.0}};
+		.direction = {.x = 20.0, .y = 20.0}
+	};
 
 	EntityArray_ADD(array, entity1);
 	EntityArray_ADD(array, entity2);

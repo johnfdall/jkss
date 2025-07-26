@@ -22,8 +22,8 @@ typedef enum {
 // Player input structure
 typedef struct {
         uint32_t player_id;
-        int move_x, move_y;
 	int32_t entity_ids[MAX_ENTITIES];
+	Point destination;
 	CommandType command_type;
 } player_input_t;
 
@@ -44,8 +44,8 @@ typedef struct {
 
 typedef struct {
         uint32_t id;
-        int x;
-        int y;
+	Point position; 
+	Point destination;
 } entity_state_t;
 
 // Game state message
@@ -53,7 +53,7 @@ typedef struct {
         message_header_t header;
         uint32_t tick;
         uint32_t player_count;
-        player_state_t players[MAX_PLAYERS];
+        player_state_t players[2];
         uint32_t entity_count;
         entity_state_t entities[MAX_ENTITIES];
 } game_state_msg_t;

@@ -2,7 +2,7 @@
 #include "../network/protocol.h"
 
 void draw_entity(const entity_state_t * const entity) {
-        DrawCircle(entity->x, entity->y, 10, RED);
+        DrawCircle(entity->position.x, entity->position.y, 10, RED);
 }
 
 void draw_entities(const game_state_msg_t * const game_msg) {

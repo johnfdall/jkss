@@ -19,8 +19,7 @@
 static void entity_to_msg(const EntityArray *const entities, game_state_msg_t *const msg) {
 	for (size_t i = 0; i < entities->length; i++) {
 		msg->entities[i].id = entities->items[i].id;
-		msg->entities[i].x = entities->items[i].x;
-		msg->entities[i].y = entities->items[i].y;
+		msg->entities[i].position = entities->items[i].position;
 	}
 	msg->entity_count = entities->length;
 }
@@ -71,8 +70,8 @@ static void handle_client_message(int sockfd, game_state_t *state) {
 					       }
 					       printf("-> type: %d -> {%d, %d}\n", 
 							       input_msg->input.command_type,
-							       input_msg->input.move_x,
-							       input_msg->input.move_y);
+							       input_msg->input.destination.x,
+							       input_msg->input.destination.y);
 
 					       update_player_input(state, &input_msg->input);
 					       break;
@@ -131,7 +130,6 @@ int main() {
 			tick_game_state(&game_state);
 			broadcast_game_state(sockfd, &game_state);
 			tick_time = current_time;
-			// printf("Broadcasting tick: %d\n", game_state.tick_count);
 		}
 
 		struct timespec ts = {0};

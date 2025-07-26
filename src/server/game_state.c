@@ -1,5 +1,4 @@
 #include "game_state.h"
-#include <stdio.h>
 #include <string.h>
 
 void init_game_state(game_state_t* state) {
@@ -45,8 +44,8 @@ void update_player_input(game_state_t* state, const player_input_t* input) {
 	uint32_t id = input->player_id;
 	if (id < MAX_PLAYERS && state->players[id].active) {
 		// Simple movement update - customize as needed
-		state->players[id].vel_x = input->move_x * 100.0f; // pixels/sec
-		state->players[id].vel_y = input->move_y * 100.0f;
+		// state->players[id].vel_x = input->move_x * 100.0f; // pixels/sec
+		// state->players[id].vel_y = input->move_y * 100.0f;
 		state->clients[id].last_seen_tick = state->tick_count;
 	}
 }
@@ -54,7 +53,7 @@ void update_player_input(game_state_t* state, const player_input_t* input) {
 void tick_game_state(game_state_t* state) {
 	float dt = 1.0f / TICK_RATE;
 
-	for (int i = 0; i < MAX_PLAYERS; i++) {
+	for (int i = 0; i < 2; i++) {
 		if (state->players[i].active) {
 			// Update positions
 			state->players[i].x += state->players[i].vel_x * dt;

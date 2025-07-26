@@ -26,13 +26,15 @@ static void EntityArray_FROM_NETWORK_MSG(EntityArray *array,
 	for (uint32_t i = 0; i < network_msg->entity_count; i++) {
 		entity_state_t incoming_entity = network_msg->entities[i];
 
-		Entity client_entity = {.id = incoming_entity.id,
-			.x = incoming_entity.x,
-			.y = incoming_entity.y,
+		Entity client_entity = {
+			.id = incoming_entity.id,
+			.position = incoming_entity.position,
+			.destination = incoming_entity.destination,
 			.radius = 30.0,
 			.color = RED,
 			.moveSpeed = 400,
-			.direction = {.x = 20.0, .y = 20.0}};
+			.direction = {.x = 20.0, .y = 20.0}
+		};
 
 		EntityArray_UPSERT(array, client_entity);
 	}
@@ -86,12 +88,16 @@ int main(int argc, char *argv[]) {
 		struct sockaddr_in from_addr;
 		ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &from_addr);
 
+		// src/client/client.c:95:67: warning: array subscript ‘game_state_msg_t[0]’ is partly outside array bounds of ‘char[4096]’ [-Warray-bounds=]
+		//    95 |                                 clientState.tick_count = state_msg->tick;
+
 		if (bytes > 0) {
 			message_header_t *header = (message_header_t *)buffer;
 			if (header->type == MSG_GAME_STATE) {
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				clientState.tick_count = state_msg->tick;
 				EntityArray_FROM_NETWORK_MSG(&clientState.entities, state_msg);
+
 			}
 		} else {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
@@ -102,8 +108,8 @@ int main(int argc, char *argv[]) {
 		if (IsMouseButtonPressed(1)) {
 			//TODO (John Fredrik): Send move command with all entities in control group
 			player_input_t input = {0};
-			input.move_x = GetMouseX();
-			input.move_y = GetMouseY();
+			input.destination.x = GetMouseX(); 
+			input.destination.y = GetMouseY(); 
 			input.player_id = 0;
 			input.command_type = CMD_MOVE;
 			ControlGroup_TO_NETPACKET(&controlGroups, &input);
