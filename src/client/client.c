@@ -62,7 +62,6 @@ int main(int argc, char *argv[]) {
 
 	message_header_t join_msg;
 	join_msg.type = MSG_PLAYER_JOIN;
-	join_msg.sequence_number = 0;
 	join_msg.data_size = 0;
 
 	send_message(sockfd, &join_msg, sizeof(join_msg), &server_addr);
@@ -94,8 +93,10 @@ int main(int argc, char *argv[]) {
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				client_state.tick_count = state_msg->tick;
 				printf("Client: %d\n", client_state.sequence_number);
-				printf("Server: %d\n", state_msg->header.sequence_number);
-				EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
+				printf("Server: %d\n", state_msg->last_processed_sequence);
+				if(state_msg->last_processed_sequence == client_state.sequence_number) {
+					EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
+				}
 			}
 		} else {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]) {
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;
 			msg.input = input;
+			printf("sending sequence number: %d\n", msg.input.sequence_number);
 
 			send_message(sockfd, &msg, sizeof(msg), &from_addr);
 		}

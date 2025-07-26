@@ -47,8 +47,9 @@ static void handle_client_message(int sockfd, GameState *state) {
 							       input_msg->input.command_type,
 							       input_msg->input.destination.x,
 							       input_msg->input.destination.y);
+					       printf("incoming sequence number: %d\n", input_msg->input.sequence_number);
 
-					       GameState_UPDATE_INPUT(state, &input_msg->input);
+					       GameState_UPDATE_INPUT(state, input_msg);
 					       break;
 				       }
 		default:

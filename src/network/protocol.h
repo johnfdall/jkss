@@ -40,7 +40,6 @@ typedef struct {
 typedef struct {
 	uint32_t client_id;
         message_type_t type;
-        uint32_t sequence_number;
         uint16_t data_size;
 } message_header_t;
 
@@ -53,6 +52,7 @@ typedef struct {
 // Game state message
 typedef struct {
         message_header_t header;
+	uint32_t last_processed_sequence;
         uint32_t tick;
         uint32_t player_count;
         player_state_t players[2];

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "../network/network.h"
 #include <string.h>
+#include <stdio.h>
 
 void GameState_INIT(GameState* state) {
 	memset(state, 0, sizeof(*state));
@@ -38,15 +39,10 @@ void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id) {
 }
 
 void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
-	uint32_t id = msg->input.player_id;
-	if (id < MAX_PLAYERS && state->players[id].active) {
-		state->clients[id].last_seen_tick = state->tick_count;
-	}
-
-	ClientInfo client = {0};
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if(state->clients[i].client_id == msg->header.client_id){
-			client.client_id = msg->header.client_id;
+			state->clients[i].last_processed_sequence = msg->input.sequence_number;
+			state->clients[i].last_seen_tick = state->tick_count;
 			break;
 		}
 	}
@@ -92,7 +88,7 @@ void GameState_BROADCAST(int sockfd, const GameState *state) {
 
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (state->clients[i].connected) {
-			msg.header.sequence_number = state->clients[i].last_processed_sequence;
+			msg.last_processed_sequence = state->clients[i].last_processed_sequence;
 			msg.header.client_id = state->clients[i].client_id;
 			send_message(sockfd, &msg, sizeof(msg), &state->clients[i].addr);
 		}
