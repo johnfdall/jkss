@@ -37,7 +37,7 @@ void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id) {
 	}
 }
 
-void GameState_UPDATE_INPUT(GameState* state, const input_msg_t* msg) {
+void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 	uint32_t id = msg->input.player_id;
 	if (id < MAX_PLAYERS && state->players[id].active) {
 		state->clients[id].last_seen_tick = state->tick_count;
@@ -45,7 +45,11 @@ void GameState_UPDATE_INPUT(GameState* state, const input_msg_t* msg) {
 
 	ClientInfo client = {0};
 	for (int i = 0; i < MAX_PLAYERS; i++) {
-		if(state->clients[i].client_id == msg->header.	}
+		if(state->clients[i].client_id == msg->header.client_id){
+			client.client_id = msg->header.client_id;
+			break;
+		}
+	}
 
 	int idx = 0;
 	while(msg->input.entity_ids[idx] != 0) {
@@ -89,6 +93,7 @@ void GameState_BROADCAST(int sockfd, const GameState *state) {
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (state->clients[i].connected) {
 			msg.header.sequence_number = state->clients[i].last_processed_sequence;
+			msg.header.client_id = state->clients[i].client_id;
 			send_message(sockfd, &msg, sizeof(msg), &state->clients[i].addr);
 		}
 	}

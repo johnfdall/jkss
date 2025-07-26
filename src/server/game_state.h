@@ -26,6 +26,6 @@ void GameState_INIT(GameState* state);
 void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id);
 void GameState_TICK(GameState* state);
 void GameState_BROADCAST(int sockfd, const GameState *state);
-void GameState_UPDATE_INPUT(GameState* state, const input_msg_t* msg);
+void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg);
 
 #endif

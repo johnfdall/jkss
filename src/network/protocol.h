@@ -38,6 +38,7 @@ typedef struct {
 
 // Network message header
 typedef struct {
+	uint32_t client_id;
         message_type_t type;
         uint32_t sequence_number;
         uint16_t data_size;
