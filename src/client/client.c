@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
 	message_header_t join_msg;
 	join_msg.type = MSG_PLAYER_JOIN;
-	join_msg.sequence = 0;
+	join_msg.sequence_number = 0;
 	join_msg.data_size = 0;
 
 	send_message(sockfd, &join_msg, sizeof(join_msg), &server_addr);
@@ -81,6 +81,7 @@ int main(int argc, char *argv[]) {
 	ClientState client_state = {0};
 	client_state.id = 1;
 	client_state.entities = entity_array;
+	client_state.sequence_number = 0;
 
 	char buffer[4096];
 	while (!WindowShouldClose()) {
@@ -92,20 +93,25 @@ int main(int argc, char *argv[]) {
 			if (header->type == MSG_GAME_STATE) {
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				client_state.tick_count = state_msg->tick;
+				printf("Client: %d\n", client_state.sequence_number);
+				printf("Server: %d\n", state_msg->header.sequence_number);
 				EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
-
 			}
 		} else {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
 		}
 
 		if (IsMouseButtonPressed(1)) {
+			client_state.sequence_number++;
 			player_input_t input = {0};
 			input.destination.x = GetMouseX(); 
 			input.destination.y = GetMouseY(); 
 			input.player_id = 0;
 			input.command_type = CMD_MOVE;
+			input.sequence_number = client_state.sequence_number;
+
 			ControlGroup_TO_NETPACKET(&control_groups, &input);
+			ClientState_FROM_INPUT(&client_state, &input);
 
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;

@@ -5,8 +5,10 @@
 #include "../entity/entity_array.h"
 
 typedef struct {
+	uint32_t client_id;
         struct sockaddr_in addr;
         uint32_t last_seen_tick;
+	uint32_t last_processed_sequence;
         uint8_t connected;
 } ClientInfo;
 
@@ -22,8 +24,8 @@ typedef struct {
 int GameState_ADD_PLAYER(GameState* state, const struct sockaddr_in* client_addr);
 void GameState_INIT(GameState* state);
 void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id);
-void GameState_UPDATE_INPUT(GameState* state, const player_input_t* input);
 void GameState_TICK(GameState* state);
 void GameState_BROADCAST(int sockfd, const GameState *state);
+void GameState_UPDATE_INPUT(GameState* state, const input_msg_t* msg);
 
 #endif

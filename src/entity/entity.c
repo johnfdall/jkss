@@ -1,5 +1,6 @@
 #include "entity.h"
 #include "control_group.h"
+#include <raylib.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -10,6 +11,7 @@ void DrawEntity(const Entity entity, ControlGroup *control_group) {
 	DrawText(text_buffer, entity.position.x - 2, entity.position.y - 5, 10, YELLOW);
 	if (ControlGroup_EXISTS(control_group, entity.id)) {
 		DrawCircleLines(entity.position.x, entity.position.y, entity.radius + 10, entity.color);
+		DrawLine(entity.position.x, entity.position.y, entity.destination.x, entity.destination.y, RED);
 	}
 }
 

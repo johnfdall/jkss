@@ -37,13 +37,24 @@ void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id) {
 	}
 }
 
-void GameState_UPDATE_INPUT(GameState* state, const player_input_t* input) {
-	uint32_t id = input->player_id;
+void GameState_UPDATE_INPUT(GameState* state, const input_msg_t* msg) {
+	uint32_t id = msg->input.player_id;
 	if (id < MAX_PLAYERS && state->players[id].active) {
-		// Simple movement update - customize as needed
-		// state->players[id].vel_x = input->move_x * 100.0f; // pixels/sec
-		// state->players[id].vel_y = input->move_y * 100.0f;
 		state->clients[id].last_seen_tick = state->tick_count;
+	}
+
+	ClientInfo client = {0};
+	for (int i = 0; i < MAX_PLAYERS; i++) {
+		if(state->clients[i].client_id == msg->header.	}
+
+	int idx = 0;
+	while(msg->input.entity_ids[idx] != 0) {
+		for (size_t i = 0; i < state->entities.length; i++) {
+			if(msg->input.entity_ids[idx] == state->entities.items[i].id) {
+				state->entities.items[i].destination = msg->input.destination;
+			}
+		}
+		idx++;
 	}
 }
 
@@ -67,17 +78,17 @@ void GameState_TICK(GameState* state) {
 
 void GameState_BROADCAST(int sockfd, const GameState *state) {
 	game_state_msg_t msg;
-	msg.header.type = MSG_GAME_STATE;
-	msg.header.sequence = state->tick_count;
-	msg.header.data_size = sizeof(game_state_msg_t) - sizeof(message_header_t);
-	msg.tick = state->tick_count;
-	msg.player_count = state->active_players;
-	msg.entity_count = state->entity_count;
+	msg.header.type		= MSG_GAME_STATE;
+	msg.header.data_size	= sizeof(game_state_msg_t) - sizeof(message_header_t);
+	msg.tick		= state->tick_count;
+	msg.player_count	= state->active_players;
+	msg.entity_count	= state->entity_count;
 	memcpy(msg.players, state->players, sizeof(state->players));
 	EntityArray_TO_NETPACKET(&state->entities, &msg);
 
 	for (int i = 0; i < MAX_PLAYERS; i++) {
 		if (state->clients[i].connected) {
+			msg.header.sequence_number = state->clients[i].last_processed_sequence;
 			send_message(sockfd, &msg, sizeof(msg), &state->clients[i].addr);
 		}
 	}
