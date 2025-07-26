@@ -8,21 +8,22 @@ typedef struct {
         struct sockaddr_in addr;
         uint32_t last_seen_tick;
         uint8_t connected;
-} client_info_t;
+} ClientInfo;
 
 typedef struct {
         player_state_t players[2];
-        client_info_t clients[MAX_PLAYERS];
+        ClientInfo clients[MAX_PLAYERS];
         EntityArray entities;
         uint8_t entity_count;
         uint32_t tick_count;
         uint32_t active_players;
-} game_state_t;
+} GameState;
 
-void init_game_state(game_state_t* state);
-int add_player(game_state_t* state, const struct sockaddr_in* client_addr);
-void remove_player(game_state_t* state, uint32_t player_id);
-void update_player_input(game_state_t* state, const player_input_t* input);
-void tick_game_state(game_state_t* state);
+int GameState_ADD_PLAYER(GameState* state, const struct sockaddr_in* client_addr);
+void GameState_INIT(GameState* state);
+void GameState_REMOVE_PLAYER(GameState* state, uint32_t player_id);
+void GameState_UPDATE_INPUT(GameState* state, const player_input_t* input);
+void GameState_TICK(GameState* state);
+void GameState_BROADCAST(int sockfd, const GameState *state);
 
 #endif

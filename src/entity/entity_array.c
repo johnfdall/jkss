@@ -209,6 +209,14 @@ Entity EntityArray_GET(EntityArray *array, size_t index) {
 	return invalidEntity;
 }
 
+void EntityArray_TO_NETPACKET(const EntityArray *const entities, game_state_msg_t *const msg) {
+	for (size_t i = 0; i < entities->length; i++) {
+		msg->entities[i].id = entities->items[i].id;
+		msg->entities[i].position = entities->items[i].position;
+	}
+	msg->entity_count = entities->length;
+}
+
 void HandleEntityClick(EntityArray *array, ControlGroup *group) {
 	for (size_t i = 0; i < array->length; i++) {
 		Entity item = EntityArray_GET(array, i);
@@ -232,3 +240,4 @@ void PrintEntities(EntityArray *array) {
 		printf("%d\n", item.id);
 	}
 }
+

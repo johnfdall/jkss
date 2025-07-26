@@ -16,33 +16,8 @@
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
 
-static void entity_to_msg(const EntityArray *const entities, game_state_msg_t *const msg) {
-	for (size_t i = 0; i < entities->length; i++) {
-		msg->entities[i].id = entities->items[i].id;
-		msg->entities[i].position = entities->items[i].position;
-	}
-	msg->entity_count = entities->length;
-}
 
-static void broadcast_game_state(int sockfd, const game_state_t *state) {
-	game_state_msg_t msg;
-	msg.header.type = MSG_GAME_STATE;
-	msg.header.sequence = state->tick_count;
-	msg.header.data_size = sizeof(game_state_msg_t) - sizeof(message_header_t);
-	msg.tick = state->tick_count;
-	msg.player_count = state->active_players;
-	msg.entity_count = state->entity_count;
-	memcpy(msg.players, state->players, sizeof(state->players));
-	entity_to_msg(&state->entities, &msg);
-
-	for (int i = 0; i < MAX_PLAYERS; i++) {
-		if (state->clients[i].connected) {
-			send_message(sockfd, &msg, sizeof(msg), &state->clients[i].addr);
-		}
-	}
-}
-
-static void handle_client_message(int sockfd, game_state_t *state) {
+static void handle_client_message(int sockfd, GameState *state) {
 	char buffer[1024];
 	struct sockaddr_in client_addr;
 
@@ -55,7 +30,7 @@ static void handle_client_message(int sockfd, game_state_t *state) {
 
 	switch (header->type) {
 		case MSG_PLAYER_JOIN: {
-					      int player_id = add_player(state, &client_addr);
+					      int player_id = GameState_ADD_PLAYER(state, &client_addr);
 					      printf("Player %d joined\n", player_id);
 					      break;
 				      }
@@ -73,7 +48,7 @@ static void handle_client_message(int sockfd, game_state_t *state) {
 							       input_msg->input.destination.x,
 							       input_msg->input.destination.y);
 
-					       update_player_input(state, &input_msg->input);
+					       GameState_UPDATE_INPUT(state, &input_msg->input);
 					       break;
 				       }
 		default:
@@ -103,12 +78,12 @@ int main() {
 	Arena entity_arena;
         ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
 
-        EntityArray entityArray;
-        EntityArray_INIT(&entityArray, &entity_arena, 20);
+        EntityArray entity_array;
+        EntityArray_INIT(&entity_array, &entity_arena, 20);
 
-	game_state_t game_state;
-	init_game_state(&game_state);
-	game_state.entities = entityArray;
+	GameState game_state;
+	GameState_INIT(&game_state);
+	game_state.entities = entity_array;
 	EntityArray_SETUP(&game_state.entities);
 
 	printf("Server started on port %d\n", SERVER_PORT);
@@ -127,8 +102,8 @@ int main() {
 			(current_time.tv_nsec - tick_time.tv_nsec) / 1000000;
 
 		if (elapsed_ms >= TICK_INTERVAL_MS) {
-			tick_game_state(&game_state);
-			broadcast_game_state(sockfd, &game_state);
+			GameState_TICK(&game_state);
+			GameState_BROADCAST(sockfd, &game_state);
 			tick_time = current_time;
 		}
 

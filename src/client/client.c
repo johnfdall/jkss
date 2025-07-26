@@ -68,51 +68,44 @@ int main(int argc, char *argv[]) {
 	send_message(sockfd, &join_msg, sizeof(join_msg), &server_addr);
 	printf("Sent join request to server\n");
 
-	// Setup game state
 	Arena entity_arena;
-	ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
-	ControlGroup controlGroups;
-	ControlGroup_INIT(&controlGroups, &entity_arena, 100);
-	EntityArray entityArray;
-	EntityArray_INIT(&entityArray, &entity_arena, 20);
+	ArenaInit(&entity_arena, 1024 * 1024 * 1024);
+						      
+	ControlGroup control_groups;
+	ControlGroup_INIT(&control_groups, &entity_arena, 100);
+
+	EntityArray entity_array;
+	EntityArray_INIT(&entity_array, &entity_arena, 20);
 
 
-	ClientState clientState = {0};
-	// TODO(John Fredrik): This should come from some kind of
-	//"joined server" message with initial client state data
-	clientState.id = 1;
-	clientState.entities = entityArray;
+	ClientState client_state = {0};
+	client_state.id = 1;
+	client_state.entities = entity_array;
 
 	char buffer[4096];
 	while (!WindowShouldClose()) {
 		struct sockaddr_in from_addr;
 		ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &from_addr);
 
-		// src/client/client.c:95:67: warning: array subscript ‘game_state_msg_t[0]’ is partly outside array bounds of ‘char[4096]’ [-Warray-bounds=]
-		//    95 |                                 clientState.tick_count = state_msg->tick;
-
 		if (bytes > 0) {
 			message_header_t *header = (message_header_t *)buffer;
 			if (header->type == MSG_GAME_STATE) {
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
-				clientState.tick_count = state_msg->tick;
-				EntityArray_FROM_NETWORK_MSG(&clientState.entities, state_msg);
+				client_state.tick_count = state_msg->tick;
+				EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
 
 			}
 		} else {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
 		}
 
-		// Inputs
-		// Right-click
 		if (IsMouseButtonPressed(1)) {
-			//TODO (John Fredrik): Send move command with all entities in control group
 			player_input_t input = {0};
 			input.destination.x = GetMouseX(); 
 			input.destination.y = GetMouseY(); 
 			input.player_id = 0;
 			input.command_type = CMD_MOVE;
-			ControlGroup_TO_NETPACKET(&controlGroups, &input);
+			ControlGroup_TO_NETPACKET(&control_groups, &input);
 
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;
@@ -121,8 +114,8 @@ int main(int argc, char *argv[]) {
 			send_message(sockfd, &msg, sizeof(msg), &from_addr);
 		}
 
-		HandleEntityClick(&clientState.entities, &controlGroups);
-		DrawEntities(&clientState.entities, &controlGroups);
+		HandleEntityClick(&client_state.entities, &control_groups);
+		DrawEntities(&client_state.entities, &control_groups);
 		BeginDrawing();
 		ClearBackground(BLACK);
 		EndDrawing();
