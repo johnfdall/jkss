@@ -9,22 +9,29 @@ typedef enum {
         CMD_ATTACK, 
 } CommandType;
 
-typedef struct Point {
-        int32_t x;
-        int32_t y;
+//TODO(John Fredrik): This should be moved and turned
+//into a struct which represents network Vec2
+typedef struct {
+        int16_t x;
+        int16_t y;
 } Point;
 
-typedef struct SelectionRect {
+typedef struct {
+        float x;
+        float y;
+} Vec2;
+
+typedef struct {
         int32_t x;
         int32_t y;
         int32_t width;
         int32_t height;
 } SelectionRect;
 
-typedef struct BoxSelectState {
+typedef struct {
         bool is_selecting;
-        Point start_pos;
-        Point current_pos;
+        Vec2 start_pos;
+        Vec2 current_pos;
 } BoxSelectState;
 
 #endif

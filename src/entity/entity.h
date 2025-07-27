@@ -7,12 +7,12 @@
 
 typedef struct {
         int32_t id;
-	Point position;
-	Point destination;
+	Vec2 position;
+	Vec2 destination;
+        Vec2 direction;
         float radius;
         Color color;
         int moveSpeed;
-        Vector2 direction;
 } Entity;
 
 void DrawEntity(Entity entity, ControlGroup *group);

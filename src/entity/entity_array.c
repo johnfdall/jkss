@@ -1,3 +1,4 @@
+#include "../common/utils.h"
 #include "entity_array.h"
 #include "control_group.h"
 #include "entity.h"
@@ -214,8 +215,8 @@ Entity EntityArray_GET(EntityArray *array, size_t index) {
 void EntityArray_TO_NETPACKET(const EntityArray *const entities, game_state_msg_t *const msg) {
 	for (size_t i = 0; i < entities->length; i++) {
 		msg->entities[i].id = entities->items[i].id;
-		msg->entities[i].position = entities->items[i].position;
-		msg->entities[i].destination = entities->items[i].destination;
+                compress_position(entities->items[i].position, &msg->entities[i].position);
+                compress_position(entities->items[i].destination, &msg->entities[i].destination);
 	}
 	msg->entity_count = entities->length;
 }

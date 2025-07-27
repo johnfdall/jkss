@@ -11,6 +11,7 @@ SERVER_SRCS = $(SRCDIR)/server/server.c \
 	      $(SRCDIR)/entity/entity_array.c\
 	      $(SRCDIR)/entity/arena.c\
 	      $(SRCDIR)/entity/control_group.c\
+	      $(SRCDIR)/common/utils.c\
 
 CLIENT_SRCS = $(SRCDIR)/client/client.c \
 	      $(SRCDIR)/client/client_state.c \
@@ -20,6 +21,7 @@ CLIENT_SRCS = $(SRCDIR)/client/client.c \
 	      $(SRCDIR)/entity/arena.c \
 	      $(SRCDIR)/entity/control_group.c \
 	      $(SRCDIR)/entity/select.c \
+	      $(SRCDIR)/common/utils.c\
 
 # Object files
 NETWORK_OBJS = $(NETWORK_SRCS:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)

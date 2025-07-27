@@ -4,6 +4,7 @@
 #include "../entity/entity_array.h"
 #include "../network/network.h"
 #include "../input/input.h"
+#include "../common/utils.h"
 #include "client_state.h"
 #include "raylib.h"
 #include <arpa/inet.h>
@@ -28,8 +29,8 @@ static void EntityArray_FROM_NETWORK_MSG(EntityArray *array,
 
 		Entity client_entity = {
 			.id = incoming_entity.id,
-			.position = incoming_entity.position,
-			.destination = incoming_entity.destination,
+			.position = decompress_position(incoming_entity.position),
+			.destination = decompress_position(incoming_entity.destination),
 			.radius = 30.0,
 			.color = RED,
 			.moveSpeed = 400,

@@ -1,6 +1,7 @@
 #include "game_state.h"
 #include "../network/network.h"
 #include "../entity/entity_array.h"
+#include "../common/utils.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -52,7 +53,7 @@ void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 	while(msg->input.entity_ids[idx] != 0) {
 		for (size_t i = 0; i < state->entities.length; i++) {
 			if(msg->input.entity_ids[idx] == state->entities.items[i].id) {
-				state->entities.items[i].destination = msg->input.destination;
+				compress_position(state->entities.items[i].destination, &msg->input.destination);
 			}
 		}
 		idx++;
