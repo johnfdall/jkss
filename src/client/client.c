@@ -1,5 +1,4 @@
 #include "../entity/arena.h"
-#include "../input/input.h"
 #include "../entity/control_group.h"
 #include "../entity/entity.h"
 #include "../entity/entity_array.h"

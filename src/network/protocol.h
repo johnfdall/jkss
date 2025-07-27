@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <netinet/in.h>
-#include "../input/input.h"
+#include "../common/types.h"
 
 #define MAX_PLAYERS 100
 #define MAX_ENTITIES 100

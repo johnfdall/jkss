@@ -2,15 +2,10 @@
 #define INPUT_H
 
 #include <stdint.h>
+#include <raylib.h>
+#include "../common/types.h"
+#include "../client/client_state.h"
 
-typedef enum { 
-        CMD_MOVE, 
-        CMD_ATTACK, 
-} CommandType;
-
-typedef struct Point {
-        int32_t x;
-        int32_t y;
-} Point;
+void Input_RIGHT_CLICK(ClientState *client_state, ControlGroup *control_groups, int sockfd, struct sockaddr_in from_addr);
 
 #endif

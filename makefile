@@ -14,6 +14,7 @@ SERVER_SRCS = $(SRCDIR)/server/server.c \
 
 CLIENT_SRCS = $(SRCDIR)/client/client.c \
 	      $(SRCDIR)/client/client_state.c \
+	      $(SRCDIR)/input/input.c \
 	      $(SRCDIR)/entity/entity.c \
 	      $(SRCDIR)/entity/entity_array.c \
 	      $(SRCDIR)/entity/arena.c \
