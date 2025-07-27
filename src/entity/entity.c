@@ -22,3 +22,13 @@ bool IsEntityClicked(const Entity entity) {
 				          (Vector2){entity.position.x, entity.position.y},
 				          entity.radius);
 }
+
+bool IsEntityShiftClicked(const Entity entity) {
+	const Vector2 mouse_position = GetMousePosition();
+	const bool is_left_clicked = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+	const bool is_shift_held = IsKeyDown(KEY_LEFT_SHIFT);
+	return is_left_clicked && is_shift_held &&
+		CheckCollisionPointCircle(mouse_position, 
+				          (Vector2){entity.position.x, entity.position.y},
+				          entity.radius);
+}

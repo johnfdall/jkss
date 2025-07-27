@@ -22,5 +22,7 @@ bool ControlGroup_EXISTS(ControlGroup *group, int32_t id);
 int16_t ControlGroup_EXISTS_AT(ControlGroup *group, int32_t id);
 void ControlGroup_PRINT(const ControlGroup * const control_group);
 void ControlGroup_TO_NETPACKET(ControlGroup *control_group, player_input_t *packet);
+void ControlGroup_SELECT(ControlGroup *control_group, int32_t id);
+void ControlGroup_CLEAR(ControlGroup * const control_group);
 
 #endif

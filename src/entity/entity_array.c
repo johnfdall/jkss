@@ -1,4 +1,6 @@
 #include "entity_array.h"
+#include "control_group.h"
+#include "entity.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -221,9 +223,13 @@ void EntityArray_TO_NETPACKET(const EntityArray *const entities, game_state_msg_
 void HandleEntityClick(EntityArray *array, ControlGroup *group) {
 	for (size_t i = 0; i < array->length; i++) {
 		Entity item = EntityArray_GET(array, i);
-		if (IsEntityClicked(item)) {
-			printf("ENTITY CLICKED %d\n", item.id);
+		if(IsEntityShiftClicked(item)) {
 			ControlGroup_TOGGLE(group, item.id);
+			break;
+		}
+		if (IsEntityClicked(item)) {
+			ControlGroup_SELECT(group, item.id);
+			break;
 		};
 	}
 }

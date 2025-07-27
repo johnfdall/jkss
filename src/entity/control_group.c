@@ -42,6 +42,7 @@ void ControlGroup_ADD(ControlGroup *control_group, int32_t id) {
 	control_group->ids[control_group->length++] = id;
 }
 
+
 void ControlGroup_REMOVE_AT(ControlGroup *control_group, size_t index) {
 	control_group->ids[index] = 0;
 }
@@ -59,6 +60,18 @@ int32_t ControlGroup_GET(ControlGroup *array, size_t index) {
 	}
 
 	return 0;
+}
+
+void ControlGroup_CLEAR(ControlGroup * const control_group) {
+	for (size_t i = 0; i < control_group->length; i++) {
+		control_group->ids[i] = 0;
+	}
+	control_group->length = 0;
+}
+
+void ControlGroup_SELECT(ControlGroup *control_group, int32_t id) {
+	ControlGroup_CLEAR(control_group);
+	ControlGroup_ADD(control_group, id);
 }
 
 void ControlGroup_TOGGLE(ControlGroup *control_group, int32_t id) {

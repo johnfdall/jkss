@@ -92,8 +92,6 @@ int main(int argc, char *argv[]) {
 			if (header->type == MSG_GAME_STATE) {
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				client_state.tick_count = state_msg->tick;
-				printf("Client: %d\n", client_state.sequence_number);
-				printf("Server: %d\n", state_msg->last_processed_sequence);
 				if(state_msg->last_processed_sequence == client_state.sequence_number) {
 					EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
 				}
@@ -117,8 +115,6 @@ int main(int argc, char *argv[]) {
 			input_msg_t msg = {0};
 			msg.header.type = MSG_PLAYER_INPUT;
 			msg.input = input;
-			printf("sending sequence number: %d\n", msg.input.sequence_number);
-
 			send_message(sockfd, &msg, sizeof(msg), &from_addr);
 		}
 
