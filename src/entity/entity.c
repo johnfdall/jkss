@@ -3,6 +3,7 @@
 #include <raylib.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <math.h>
 
 void DrawEntity(const Entity entity, ControlGroup *control_group) {
 	DrawCircle(entity.position.x, entity.position.y, entity.radius, entity.color);
@@ -13,6 +14,31 @@ void DrawEntity(const Entity entity, ControlGroup *control_group) {
 		DrawCircleLines(entity.position.x, entity.position.y, entity.radius + 10, entity.color);
 		DrawLine(entity.position.x, entity.position.y, entity.destination.x, entity.destination.y, RED);
 	}
+}
+
+void UpdateEntity(Entity *entity, float deltaTime) {
+	// Calculate distance to destination
+	float dx = entity->destination.x - entity->position.x;
+	float dy = entity->destination.y - entity->position.y;
+	float distance = sqrtf(dx * dx + dy * dy);
+	
+	// If we're close enough to the destination, stop moving
+	if (distance < 1.0f) {
+		entity->position.x = entity->destination.x;
+		entity->position.y = entity->destination.y;
+		entity->direction.x = 0.0f;
+		entity->direction.y = 0.0f;
+		return;
+	}
+	
+	// Calculate normalized direction vector
+	entity->direction.x = dx / distance;
+	entity->direction.y = dy / distance;
+	
+	// Move towards destination
+	float moveDistance = entity->moveSpeed * deltaTime;
+	entity->position.x += entity->direction.x * moveDistance;
+	entity->position.y += entity->direction.y * moveDistance;
 }
 
 bool IsEntityClicked(const Entity entity) {

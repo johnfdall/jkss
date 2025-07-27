@@ -69,7 +69,7 @@ void Input_DRAW_BOX_SELECT(const BoxSelectState *box_state) {
 		int32_t height = max_y - min_y;
 		
 		// Draw selection rectangle with semi-transparent fill and border
-		DrawRectangle(min_x, min_y, width, height, (Color){0, 255, 0, 50}); // Green with alpha
+		// DrawRectangle(min_x, min_y, width, height, (Color){0, 255, 0, 50}); // Green with alpha
 		DrawRectangleLines(min_x, min_y, width, height, GREEN);
 	}
 }

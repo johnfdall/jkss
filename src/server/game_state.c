@@ -1,5 +1,6 @@
 #include "game_state.h"
 #include "../network/network.h"
+#include "../entity/entity_array.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -60,6 +61,9 @@ void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 
 void GameState_TICK(GameState* state) {
 	float dt = 1.0f / TICK_RATE;
+
+	// Update entity movement
+	UpdateEntities(&state->entities, dt);
 
 	for (int i = 0; i < 2; i++) {
 		if (state->players[i].active) {

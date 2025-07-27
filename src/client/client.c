@@ -104,6 +104,10 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
 		}
 
+		// Update entity movement
+		float deltaTime = GetFrameTime();
+		UpdateEntities(&client_state.entities, deltaTime);
+
 		// Handle box select input
 		Input_BOX_SELECT_START(&box_select_state);
 		Input_BOX_SELECT_UPDATE(&box_select_state);

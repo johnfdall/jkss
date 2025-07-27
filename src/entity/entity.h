@@ -16,6 +16,7 @@ typedef struct {
 } Entity;
 
 void DrawEntity(Entity entity, ControlGroup *group);
+void UpdateEntity(Entity *entity, float deltaTime);
 bool IsEntityClicked(Entity entity);
 bool IsEntityShiftClicked(const Entity entity);
 

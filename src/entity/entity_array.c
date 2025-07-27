@@ -234,6 +234,12 @@ void HandleEntityClick(EntityArray *array, ControlGroup *group) {
 	}
 }
 
+void UpdateEntities(EntityArray *array, float deltaTime) {
+	for (size_t i = 0; i < array->length; i++) {
+		UpdateEntity(&array->items[i], deltaTime);
+	}
+}
+
 void DrawEntities(EntityArray *array, ControlGroup *group) {
 	for (size_t i = 0; i < array->length; i++) {
 		Entity item = EntityArray_GET(array, i);
