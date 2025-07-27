@@ -3,6 +3,7 @@
 #include "../entity/entity.h"
 #include "../entity/entity_array.h"
 #include "../network/network.h"
+#include "../input/input.h"
 #include "client_state.h"
 #include "raylib.h"
 #include <arpa/inet.h>
@@ -81,6 +82,10 @@ int main(int argc, char *argv[]) {
 	client_state.entities = entity_array;
 	client_state.sequence_number = 0;
 
+	// Initialize box select state
+	BoxSelectState box_select_state = {0};
+	box_select_state.is_selecting = false;
+
 	char buffer[4096];
 	while (!WindowShouldClose()) {
 		struct sockaddr_in from_addr;
@@ -99,28 +104,22 @@ int main(int argc, char *argv[]) {
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
 		}
 
-		if (IsMouseButtonPressed(1)) {
-			client_state.sequence_number++;
-			player_input_t input = {0};
-			input.destination.x = GetMouseX(); 
-			input.destination.y = GetMouseY(); 
-			input.player_id = 0;
-			input.command_type = CMD_MOVE;
-			input.sequence_number = client_state.sequence_number;
+		// Handle box select input
+		Input_BOX_SELECT_START(&box_select_state);
+		Input_BOX_SELECT_UPDATE(&box_select_state);
+		Input_BOX_SELECT_END(&box_select_state, &client_state, &control_groups);
+		
+		// Handle right-click for movement commands
+		Input_RIGHT_CLICK(&client_state, &control_groups, sockfd, from_addr);
 
-			ControlGroup_TO_NETPACKET(&control_groups, &input);
-			ClientState_FROM_INPUT(&client_state, &input);
-
-			input_msg_t msg = {0};
-			msg.header.type = MSG_PLAYER_INPUT;
-			msg.input = input;
-			send_message(sockfd, &msg, sizeof(msg), &from_addr);
+		// Handle individual entity clicks (only if not box selecting)
+		if (!box_select_state.is_selecting) {
+			HandleEntityClick(&client_state.entities, &control_groups);
 		}
-
-		HandleEntityClick(&client_state.entities, &control_groups);
-		DrawEntities(&client_state.entities, &control_groups);
 		BeginDrawing();
 		ClearBackground(BLACK);
+		DrawEntities(&client_state.entities, &control_groups);
+		Input_DRAW_BOX_SELECT(&box_select_state);
 		EndDrawing();
 	}
 
