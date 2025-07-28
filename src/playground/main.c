@@ -1,40 +1,40 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
 
-typedef struct __attribute((packed)) {
-        uint16_t x;
-        uint16_t y;
-} PlayerState;
+typedef struct {
+	float x;
+	float y;
+} vec2_t;
 
-typedef struct __attribute((packed)){
-        uint32_t sequence_number;
-        uint8_t number_of_players;
-        PlayerState players[10];
-} GameStatePacket;
+typedef struct {
+	uint16_t x;
+	uint16_t y;
+} vec2_network_t;
+
+void compress_position(vec2_t pos, vec2_network_t *out) {
+        out->x = (uint16_t)(pos.x * 100);
+        out->y = (uint16_t)(pos.y * 100);
+};
+
+vec2_t decompress_position(vec2_network_t point) {
+    return (vec2_t){
+        .x = (float)point.x / 100.0f,
+        .y = (float)point.y / 100.0f
+    };
+};
 
 int main() {
-        GameStatePacket net_packet;
-        memset(&net_packet, 0, sizeof(net_packet));
-        PlayerState player_one;
-        player_one.x = 100;
-        player_one.y = 100;
+	vec2_t testing = {
+		.x = 137.3291,
+		.y = 99.3218
+	};
+	printf("Before compression: {x: %f, y: %f}\n", testing.x, testing.y);
+	vec2_network_t out = {0};
+	compress_position(testing, &out);
+	printf("After compression: {x: %d, y: %d}\n", out.x, out.y);
+	vec2_t after = decompress_position(out);
+	printf("After decompression: {x: %f, y: %f}\n", after.x, after.y);
 
-        PlayerState player_two;
-        player_two.x = 200;
-        player_two.y = 200;
-
-        net_packet.sequence_number = 1;
-        net_packet.number_of_players = 2;
-        net_packet.players[0] = player_one;
-        net_packet.players[1] = player_two;
-
-        uint8_t the_thing[sizeof(net_packet)];
-        printf("sizeof(net_packet): %lu\n", sizeof(net_packet));
-        memcpy(&the_thing, &net_packet, sizeof(net_packet));
-
-        printf("sizeof(the_thing): %lu\n", sizeof(the_thing));
-
-        return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
