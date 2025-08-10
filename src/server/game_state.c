@@ -53,7 +53,7 @@ void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 	while(msg->input.entity_ids[idx] != 0) {
 		for (size_t i = 0; i < state->entities.length; i++) {
 			if(msg->input.entity_ids[idx] == state->entities.items[i].id) {
-				compress_position(state->entities.items[i].destination, &msg->input.destination);
+				state->entities.items[i].destination = decompress_position(msg->input.destination);
 			}
 		}
 		idx++;
@@ -62,21 +62,7 @@ void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 
 void GameState_TICK(GameState* state) {
 	float dt = 1.0f / TICK_RATE;
-
-	// Update entity movement
 	UpdateEntities(&state->entities, dt);
-
-	for (int i = 0; i < 2; i++) {
-		if (state->players[i].active) {
-			// Update positions
-			state->players[i].x += state->players[i].vel_x * dt;
-			state->players[i].y += state->players[i].vel_y * dt;
-
-			// Apply friction
-			state->players[i].vel_x *= 0.9f;
-			state->players[i].vel_y *= 0.9f;
-		}
-	}
 
 	state->tick_count++;
 }

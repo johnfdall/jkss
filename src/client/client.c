@@ -22,33 +22,39 @@
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
-static void EntityArray_FROM_NETWORK_MSG(EntityArray *array,
-		game_state_msg_t *network_msg) {
-	for (uint32_t i = 0; i < network_msg->entity_count; i++) {
-		entity_state_t incoming_entity = network_msg->entities[i];
+static void 
+EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg) 
+{
+	for (uint32_t i = 0; i < network_msg->entity_count; i++) 
+	{
+		const entity_state_t incoming_entity = network_msg->entities[i];
+		printf("THE THING: %d, %d\n", incoming_entity.position.x, incoming_entity.position.y);
 
-		Entity client_entity = {
+		const Entity client_entity = {
 			.id = incoming_entity.id,
 			.position = decompress_position(incoming_entity.position),
 			.destination = decompress_position(incoming_entity.destination),
-			.radius = 30.0,
+			.radius = 30.0f,
 			.color = RED,
 			.moveSpeed = 400,
-			.direction = {.x = 20.0, .y = 20.0}
+			.direction = {.x = 20.0f, .y = 20.0f}
 		};
 
 		EntityArray_UPSERT(array, client_entity);
 	}
 }
 
-int main(int argc, char *argv[]) {
-	if (argc < 3) {
+int main(int argc, char *argv[]) 
+{
+	if (argc < 3) 
+	{
 		printf("Usage: %s <server_ip>\n", argv[0]);
 		return 1;
 	}
 
-	SOCKET sockfd = create_udp_socket();
-	if (sockfd < 0) {
+	const SOCKET sockfd = create_udp_socket();
+	if (sockfd < 0) 
+	{
 		perror("Failed to create socket");
 		return 1;
 	}
@@ -88,25 +94,31 @@ int main(int argc, char *argv[]) {
 	box_select_state.is_selecting = false;
 
 	char buffer[4096];
-	while (!WindowShouldClose()) {
+	while (!WindowShouldClose()) 
+	{
 		struct sockaddr_in from_addr;
-		ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &from_addr);
+		const ssize_t bytes = receive_message(sockfd, buffer, sizeof(buffer), &from_addr);
 
-		if (bytes > 0) {
+		if (bytes > 0) 
+		{
 			message_header_t *header = (message_header_t *)buffer;
-			if (header->type == MSG_GAME_STATE) {
+			if (header->type == MSG_GAME_STATE)
+			{
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				client_state.tick_count = state_msg->tick;
-				if(state_msg->last_processed_sequence == client_state.sequence_number) {
+				if(state_msg->last_processed_sequence == client_state.sequence_number) 
+				{
 					EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
 				}
 			}
-		} else {
+		} 
+		else 
+		{
 			fprintf(stderr, "recv() failed: errno=%d (%s)\n", errno, strerror(errno));
 		}
 
 		// Update entity movement
-		float deltaTime = GetFrameTime();
+		const float deltaTime = GetFrameTime();
 		UpdateEntities(&client_state.entities, deltaTime);
 
 		// Handle box select input
@@ -118,7 +130,8 @@ int main(int argc, char *argv[]) {
 		Input_RIGHT_CLICK(&client_state, &control_groups, sockfd, from_addr);
 
 		// Handle individual entity clicks (only if not box selecting)
-		if (!box_select_state.is_selecting) {
+		if (!box_select_state.is_selecting) 
+		{
 			HandleEntityClick(&client_state.entities, &control_groups);
 		}
 		BeginDrawing();

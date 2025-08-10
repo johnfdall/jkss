@@ -44,7 +44,7 @@ typedef struct {
 } message_header_t;
 
 typedef struct {
-        uint32_t id;
+    uint32_t id;
 	Point position; 
 	Point destination;
 } entity_state_t;

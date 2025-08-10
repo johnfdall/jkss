@@ -12,6 +12,6 @@ typedef struct {
 } ClientState;
 
 
-void ClientState_FROM_INPUT(ClientState * client_state, player_input_t *input);
+void ClientState_FROM_INPUT(ClientState *client_state, player_input_t *input, Vec2 pos);
 
 #endif
