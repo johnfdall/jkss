@@ -3,9 +3,11 @@
 #include "../entity/entity_array.h"
 #include "game_state.h"
 #include <arpa/inet.h>
+#include <bits/time.h>
 #include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -16,6 +18,7 @@
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
 
+#define NANOSECONDS_PER_SECOND 1000000000L
 
 static void handle_client_message(int sockfd, GameState *state) {
 	char buffer[1024];
@@ -57,20 +60,24 @@ static void handle_client_message(int sockfd, GameState *state) {
 	}
 }
 
-int main() {
+int main() 
+{
 	int sockfd = create_udp_socket();
-	if (sockfd < 0) {
+	if (sockfd < 0) 
+        {
 		perror("Failed to create socket");
 		return 1;
 	}
 
-	if (bind_socket(sockfd, SERVER_PORT) < 0) {
+	if (bind_socket(sockfd, SERVER_PORT) < 0) 
+        {
 		perror("Failed to bind socket");
 		close(sockfd);
 		return 1;
 	}
 
-	if (set_socket_nonblocking(sockfd) < 0) {
+	if (set_socket_nonblocking(sockfd) < 0) 
+        {
 		perror("Failed to set socket non-blocking");
 		close(sockfd);
 		return 1;
@@ -93,24 +100,28 @@ int main() {
 	struct timespec tick_time;
 	timespec_get(&tick_time, TIME_UTC);
 
-	while (1) {
+        struct timespec start_time, end_time, ts = {0};
+
+	while (1) 
+        {
+                clock_gettime(CLOCK_MONOTONIC, &start_time);
+                tick_time = start_time;
+
 		handle_client_message(sockfd, &game_state);
 
-		struct timespec current_time;
-		timespec_get(&current_time, TIME_UTC);
+                GameState_TICK(&game_state);
+                GameState_BROADCAST(sockfd, &game_state);
 
-		long elapsed_ms = (current_time.tv_sec - tick_time.tv_sec) * 1000 +
-			(current_time.tv_nsec - tick_time.tv_nsec) / 1000000;
+                clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-		if (elapsed_ms >= TICK_INTERVAL_MS) {
-			GameState_TICK(&game_state);
-			GameState_BROADCAST(sockfd, &game_state);
-			tick_time = current_time;
-		}
+                int64_t elapsed_ns = (end_time.tv_nsec - start_time.tv_nsec);
+                // printf("ns/tick: %f \n", (float)elapsed_ns);
 
-		struct timespec ts = {0};
-		ts.tv_nsec = 1000000; // 1 millisecond = 1,000,000 nanoseconds
+		ts.tv_nsec = 16666667 - elapsed_ns;
+
 		nanosleep(&ts, NULL);
+
+                printf("ns/tick: %ld \n", ts.tv_nsec);
 	}
 
 	close(sockfd);

@@ -52,7 +52,7 @@ void GameState_UPDATE_INPUT(GameState* state, input_msg_t* msg) {
 	int idx = 0;
 	while(msg->input.entity_ids[idx] != 0) {
 		for (size_t i = 0; i < state->entities.length; i++) {
-			if(msg->input.entity_ids[idx] == state->entities.items[i].id) {
+			if((uint32_t)msg->input.entity_ids[idx] == state->entities.items[i].id) {
 				state->entities.items[i].destination = decompress_position(msg->input.destination);
 			}
 		}
