@@ -19,8 +19,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #define SOCKET int
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
 
 static void 
 EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg) 
@@ -28,7 +28,6 @@ EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg)
 	for (uint32_t i = 0; i < network_msg->entity_count; i++) 
 	{
 		const entity_state_t incoming_entity = network_msg->entities[i];
-		printf("THE THING: %d, %d\n", incoming_entity.position.x, incoming_entity.position.y);
 
 		const Entity client_entity = {
 			.id = incoming_entity.id,
@@ -106,7 +105,7 @@ int main(int argc, char *argv[])
 			{
 				game_state_msg_t *state_msg = (game_state_msg_t *)buffer;
 				client_state.tick_count = state_msg->tick;
-				if(state_msg->last_processed_sequence == client_state.sequence_number) 
+				if(state_msg->last_processed_sequence >= client_state.sequence_number) 
 				{
 					EntityArray_FROM_NETWORK_MSG(&client_state.entities, state_msg);
 				}

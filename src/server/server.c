@@ -121,8 +121,8 @@ int main()
 		ts.tv_nsec = 16666667 - elapsed_ns;
 
 		nanosleep(&ts, NULL);
-
-                printf("ns/tick: %ld \n", ts.tv_nsec);
+                //
+                // printf("ns/tick: %ld \n", ts.tv_nsec);
 	}
 
 	close(sockfd);

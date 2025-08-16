@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "input.h"
+#include "../common/utils.h"
 #include "../network/protocol.h"
 #include "../common/types.h"
 #include "../network/network.h"
@@ -12,12 +14,18 @@ void Input_RIGHT_CLICK(ClientState *client_state, ControlGroup *control_groups, 
 			.x = mouse_position.x,
 			.y = mouse_position.y
 		};
+                Point out_pos = {0};
+                compress_position(mp, &out_pos);
+
+                printf("Uncompressed pos: %f %f\n", mp.x, mp.y);
+                printf("Compressed pos: %hu %hu\n", out_pos.x, out_pos.y);
+
 		player_input_t input = {0};
-		input.destination.x = mouse_position.x; 
-		input.destination.y = mouse_position.y; 
+                input.destination = out_pos;
 		input.player_id = 0;
 		input.command_type = CMD_MOVE;
 		input.sequence_number = client_state->sequence_number;
+
 
 		ControlGroup_TO_NETPACKET(control_groups, &input);
 		ClientState_FROM_INPUT(client_state, &input, mp);
