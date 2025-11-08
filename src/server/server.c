@@ -71,10 +71,10 @@ int main()
 
 	if (bind_socket(sockfd, SERVER_PORT) < 0) 
         {
-		perror("Failed to bind socket");
-		close(sockfd);
-		return 1;
-	}
+                perror("Failed to bind socket");
+                close(sockfd);
+                return 1;
+        }
 
 	if (set_socket_nonblocking(sockfd) < 0) 
         {
@@ -83,25 +83,24 @@ int main()
 		return 1;
 	}
 
-	Arena entity_arena;
-        ArenaInit(&entity_arena, 1024 * 1024 * 1024); // Should be 1 gibby
+        Arena entity_arena;
+        ArenaInit(&entity_arena, 1024 * 1024 * 1024);
 
         EntityArray entity_array;
         EntityArray_INIT(&entity_array, &entity_arena, 20);
 
-	GameState game_state;
-	GameState_INIT(&game_state);
-	game_state.entities = entity_array;
-	EntityArray_SETUP(&game_state.entities);
+        GameState game_state;
+        GameState_INIT(&game_state);
+        game_state.entities = entity_array;
+        EntityArray_SETUP(&game_state.entities);
 
-	printf("Server started on port %d\n", SERVER_PORT);
-	printf("Tick rate: %d Hz\n", TICK_RATE);
+        printf("Server started on port %d\n", SERVER_PORT);
+        printf("Tick rate: %d Hz\n", TICK_RATE);
 
-	struct timespec tick_time;
-	timespec_get(&tick_time, TIME_UTC);
+        struct timespec tick_time;
+        timespec_get(&tick_time, TIME_UTC);
 
         struct timespec start_time, end_time, ts = {0};
-        //Just git config changes testing
 
 	while (1) 
         {
@@ -116,13 +115,10 @@ int main()
                 clock_gettime(CLOCK_MONOTONIC, &end_time);
 
                 int64_t elapsed_ns = (end_time.tv_nsec - start_time.tv_nsec);
-                // printf("ns/tick: %f \n", (float)elapsed_ns);
 
 		ts.tv_nsec = 16666667 - elapsed_ns;
 
 		nanosleep(&ts, NULL);
-                //
-                // printf("ns/tick: %ld \n", ts.tv_nsec);
 	}
 
 	close(sockfd);

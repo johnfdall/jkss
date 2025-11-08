@@ -4,7 +4,8 @@
 #include "../network/protocol.h"
 #include "../entity/entity_array.h"
 
-typedef struct {
+typedef struct 
+{
 	uint32_t client_id;
         struct sockaddr_in addr;
         uint32_t last_seen_tick;
@@ -12,7 +13,8 @@ typedef struct {
         uint8_t connected;
 } ClientInfo;
 
-typedef struct {
+typedef struct 
+{
         player_state_t players[2];
         ClientInfo clients[MAX_PLAYERS];
         EntityArray entities;

@@ -41,6 +41,7 @@ EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg)
 
 		EntityArray_UPSERT(array, client_entity);
 	}
+        printf("Got new state from the server\n");
 }
 
 int main(int argc, char *argv[]) 
