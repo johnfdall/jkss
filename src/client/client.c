@@ -34,14 +34,58 @@ EntityArray_FROM_NETWORK_MSG(EntityArray *array, game_state_msg_t *network_msg)
 			.position = decompress_position(incoming_entity.position),
 			.destination = decompress_position(incoming_entity.destination),
 			.radius = 30.0f,
-			.color = RED,
-			.moveSpeed = 400,
+                        .color = RED,
+                        .moveSpeed = 400,
 			.direction = {.x = 20.0f, .y = 20.0f}
 		};
 
 		EntityArray_UPSERT(array, client_entity);
 	}
         printf("Got new state from the server\n");
+}
+
+int LongestLineInString(const char *str, int length)
+{
+        int longest = 0;
+        int current = 0;
+
+        for (int i = 0;
+             i < length; 
+             i++) 
+        {
+                char current_char = str[i];
+                if(current_char == '\n' || current_char == '\0')
+                {
+                        if(current > longest)
+                        {
+                                longest = current;
+                        }
+                        current = 0;
+                }
+                current++;
+        }
+        return longest;
+}
+
+static void
+DrawClientState(const ClientState *clientState)
+{
+        int start_x = GetScreenWidth();
+        int start_y = GetScreenHeight();
+        int width = -100;
+        int height = -100;
+        char buffer[256];
+        snprintf(buffer, 
+                sizeof(buffer), 
+                "id: %d\n tick_count: %d", 
+                clientState->id, 
+                clientState->tick_count);
+        int buffer_length = TextLength(buffer);
+        int longest = LongestLineInString(buffer, buffer_length);
+        DrawText(buffer, start_x + width, start_y + height, 16, GREEN);
+        printf("Buffer length: %d\n", buffer_length);
+        printf("Longest line: %d\n", longest);
+        DrawRectangleLines(start_x, start_y, width, height, GREEN);
 }
 
 int main(int argc, char *argv[]) 
@@ -136,6 +180,7 @@ int main(int argc, char *argv[])
 		}
 		BeginDrawing();
 		ClearBackground(BLACK);
+                DrawClientState(&client_state);
 		DrawEntities(&client_state.entities, &control_groups);
 		Input_DRAW_BOX_SELECT(&box_select_state);
 		EndDrawing();
