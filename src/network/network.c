@@ -30,12 +30,16 @@ int set_socket_nonblocking(const int sockfd)
 }
 
 ssize_t send_message(const int sockfd, 
-                     const void* const data, 
+                     const void* data, 
                      const size_t size, 
-                     const struct sockaddr_in* const addr) 
+                     const struct sockaddr_in* addr) 
 {
-        return sendto(sockfd, data, size, 0, 
-                        (struct sockaddr*)addr, sizeof(*addr));
+        return sendto(sockfd, 
+			data, 
+			size, 
+			0, 
+                        (struct sockaddr*)addr, 
+			sizeof(*addr));
 }
 
 ssize_t receive_message(const int sockfd, 

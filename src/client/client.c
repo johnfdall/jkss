@@ -50,7 +50,7 @@ int LongestLineInString(const char *str, int length)
         int current = 0;
 
         for (int i = 0;
-             i < length; 
+             i < length + 1; 
              i++) 
         {
                 char current_char = str[i];
@@ -72,20 +72,19 @@ DrawClientState(const ClientState *clientState)
 {
         int start_x = GetScreenWidth();
         int start_y = GetScreenHeight();
-        int width = -100;
-        int height = -100;
+        Font default_font = GetFontDefault();
+        int font_width = default_font.recs->width;
+        int font_height = default_font.recs->height;
         char buffer[256];
         snprintf(buffer, 
                 sizeof(buffer), 
-                "id: %d\n tick_count: %d", 
-                clientState->id, 
+                        "Id: %d\nTick_count: %d", 
+                        clientState->id, 
                 clientState->tick_count);
+
         int buffer_length = TextLength(buffer);
         int longest = LongestLineInString(buffer, buffer_length);
-        DrawText(buffer, start_x + width, start_y + height, 16, GREEN);
-        printf("Buffer length: %d\n", buffer_length);
-        printf("Longest line: %d\n", longest);
-        DrawRectangleLines(start_x, start_y, width, height, GREEN);
+        DrawText(buffer, start_x + -((longest * font_width * 2) + 30), start_y + -((font_height * 2) + 30), 16, GREEN);
 }
 
 int main(int argc, char *argv[]) 
